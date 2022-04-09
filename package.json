@@ -1,0 +1,22 @@
+{
+  "name": "cienciascrapper",
+  "version": "1.0.0",
+  "description": "Application to extract and manage CienciaVitae data",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leotome/cienciascrapper.git"
+  },
+  "author": "30002511 Leonardo Oliveira, 30003439 Margarida Pereira",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/leotome/cienciascrapper/issues"
+  },
+  "homepage": "https://github.com/leotome/cienciascrapper#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
