@@ -3,21 +3,21 @@ const sql = require('./config_sql');
 exports.cRud_getFullMapeamento = () => {
     return new Promise((resolve, reject) => {
         let SQLQuery = "SELECT [Map_Cabecalho].[Id] AS 'Map_Cabecalho_Id'" +
-        "      ,[Map_Cabecalho].[NomeTabela] AS 'Map_Cabecalho_NomeTabela'" +
-        "      ,[Tipo].[Nome] AS 'Map_Cabecalho_Tipo'" +
-        "      ,[Map_Cabecalho].[Descricao] AS 'Map_Cabecalho_Descricao'" +
-        "      ,[Map_Cabecalho].[XPath] AS 'Map_Cabecalho_XPath'" +
-        "      ,[Map_Cabecalho].[DataCriacao] AS 'Map_Cabecalho_DataCriacao'" +
-        "      ,[Map_Cabecalho].[DataModificacao] AS 'Map_Cabecalho_DataModificacao'" +
-        "      ,[Map_Linha].[Id] AS 'Map_Linha_Id'" +
-        "      ,[Map_Linha].[NomeCampo] AS 'Map_Linha_NomeCampo'" +
-        "      ,[Map_Linha].[Descricao] AS 'Map_Linha_Descricao'" +
-        "      ,[Map_Linha].[TipoDado] AS 'Map_Linha_TipoDado'" +
-        "      ,[Map_Linha].[XPath_Pesquisa] AS 'Map_Linha_XPath_Pesquisa'" +
-        "      ,[Map_Linha].[ElementoEsperado] AS 'Map_Linha_ElementoEsperado'" +
-        "      ,[Map_Linha].[IndiceEsperado] AS 'Map_Linha_IndiceEsperado'" +
-        "      ,[Map_Linha].[DataCriacao] AS 'Map_Linha_DataCriacao'" +
-        "      ,[Map_Linha].[DataModificacao] AS 'Map_Linha_DataModificacao'" +
+        "      ,[Map_Cabecalho].[NomeTabela]        AS 'Map_Cabecalho_NomeTabela'" +
+        "      ,[Tipo].[Nome]                       AS 'Map_Cabecalho_Tipo'" +
+        "      ,[Map_Cabecalho].[Descricao]         AS 'Map_Cabecalho_Descricao'" +
+        "      ,[Map_Cabecalho].[XPath]             AS 'Map_Cabecalho_XPath'" +
+        "      ,[Map_Cabecalho].[DataCriacao]       AS 'Map_Cabecalho_DataCriacao'" +
+        "      ,[Map_Cabecalho].[DataModificacao]   AS 'Map_Cabecalho_DataModificacao'" +
+        "      ,[Map_Linha].[Id]                    AS 'Map_Linha_Id'" +
+        "      ,[Map_Linha].[NomeCampo]             AS 'Map_Linha_NomeCampo'" +
+        "      ,[Map_Linha].[Descricao]             AS 'Map_Linha_Descricao'" +
+        "      ,[Map_Linha].[TipoDado]              AS 'Map_Linha_TipoDado'" +
+        "      ,[Map_Linha].[XPath_Pesquisa]        AS 'Map_Linha_XPath_Pesquisa'" +
+        "      ,[Map_Linha].[ElementoEsperado]      AS 'Map_Linha_ElementoEsperado'" +
+        "      ,[Map_Linha].[IndiceEsperado]        AS 'Map_Linha_IndiceEsperado'" +
+        "      ,[Map_Linha].[DataCriacao]           AS 'Map_Linha_DataCriacao'" +
+        "      ,[Map_Linha].[DataModificacao]       AS 'Map_Linha_DataModificacao'" +
         "  FROM [dbo].[Definicao_Mapeamento] [Map_Cabecalho]" +
         "  INNER JOIN [Definicao_Mapeamento_Tipo] [Tipo] ON [Tipo].[Id] = [Map_Cabecalho].[TipoDefinicao_FK]" +
         "  LEFT OUTER JOIN [Definicao_Mapeamento_Linha] [Map_Linha] ON [Map_Cabecalho].[Id] = [Map_Linha].[Definicao_FK]"
