@@ -11,3 +11,7 @@ app.listen(PORT, () => {
 })
 
 app.use(express.static("public_html"));
+
+const test = require('./models/definicao_mapeamento');
+test.cRud_getFullMapeamento()
+.then(res => console.log(res));

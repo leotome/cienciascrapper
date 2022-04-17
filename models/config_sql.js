@@ -1,26 +1,20 @@
-var tedious = require('tedious');
+const mssql = require('mssql');
 
 exports.connect = () => {
     const config = {
-        server : null,
-        options : {},
-        authentication : {
-            type : 'default',
-            options : {
-                userName : '',
-                password : ''
-            }
-        }
+        server : 'cienciascrapper.database.windows.net,1433',
+        database : 'cienciascrapper',
+        username : 'leonardo.tome',
+        password : 'Leo3lara1901',
+        encrypt : true
     }
     return new Promise((resolve, reject) => {
-        let connection = new tedious.Connection(config);
-        connection.on('connect', (error) => {
-            if(error){
-                reject({ connected : false, error : error });
-            } else {
-                resolve({ connected : true, error : undefined });
-            }
+        mssql.connect(`Server=${config.server};Database=${config.database};User Id=${config.username};Password=${config.password};Encrypt=${config.encrypt}`)
+        .then(pool => {
+            resolve({pool : pool, error : undefined});
         })
-        connection.connect();
+        .catch(err => {
+            reject({pool : undefined, error : err});
+        })
     });
 }
