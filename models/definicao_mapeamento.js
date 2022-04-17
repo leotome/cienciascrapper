@@ -25,12 +25,40 @@ exports.cRud_getFullMapeamento = () => {
         .then(conn => {
             conn.pool.query(SQLQuery)
             .then(response => {
-                let properResponse = [];
+                let properResponse = new Map();
                 response.recordset.forEach(record => {
-                    
-                })
+                    if(properResponse.has(record.Map_Cabecalho_Id) == false){
+                        var line = {
+                            Id : record.Map_Linha_Id,
+                            NomeCampo : record.Map_Linha_NomeCampo,
+                            TipoDado : record.Map_Linha_TipoDado,
+                            XPath_Pesquisa : record.Map_Linha_XPath_Pesquisa,
+                            ElementoEsperado : record.Map_Linha_ElementoEsperado,
+                            IndiceEsperado : record.Map_Linha_IndiceEsperado,
+                        }
+                        var header = {
+                            Id : record.Map_Cabecalho_Id,
+                            NomeTabela : record.Map_Cabecalho_NomeTabela,
+                            Tipo : record.Map_Cabecalho_Tipo,
+                            XPath : record.Map_Cabecalho_XPath,
+                            Linhas : [line]
+                        }
+                        properResponse.set(record.Map_Cabecalho_Id, header);
+                    } else {
+                        var line = {
+                            Id : record.Map_Linha_Id,
+                            NomeCampo : record.Map_Linha_NomeCampo,
+                            TipoDado : record.Map_Linha_TipoDado,
+                            XPath_Pesquisa : record.Map_Linha_XPath_Pesquisa,
+                            ElementoEsperado : record.Map_Linha_ElementoEsperado,
+                            IndiceEsperado : record.Map_Linha_IndiceEsperado,
+                        }
 
-                resolve(result);
+                        var header = properResponse.get(record.Map_Cabecalho_Id);
+                        header.Linhas.push(line);
+                    }
+                })                
+                resolve(Array.from(properResponse.values()));
             })
             .catch(error => {
                 console.log('Error on getFullMapeamento(), conn.pool.query', error);
