@@ -12,6 +12,7 @@ app.listen(PORT, () => {
 
 app.use(express.static("public_html"));
 
-const test = require('./models/definicao_mapeamento');
-test.cRud_getFullMapeamento()
-.then(res => console.log(res));
+const cienciaID = 'BD1A-1C89-616D';
+const test = require('./controllers/scrape_cienciavitae');
+test.doScrapeVitae(cienciaID);
+
