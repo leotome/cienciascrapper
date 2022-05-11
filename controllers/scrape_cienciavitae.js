@@ -104,6 +104,56 @@ async function doTableScrape(mappingItem, pageReference) {
     return myResult;
 }
 
+async function doListScrape(mappingItem, pageReference) {
+    let myResult = [];
+
+    const doEvaluate = await pageReference.evaluate((mappingItem) => {
+        let doSearch = document.evaluate(mappingItem.XPath_Pesquisa, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if(doSearch === undefined){
+            return [];
+        }
+		let childNodes = doSearch.childNodes;
+
+        // %% STEP #1 : REMOVE UNEXPECTED DOM ELEMENTS %% //
+        let unexpectedElements = ['#text'];
+
+        childNodes.forEach((node) => {
+			if(unexpectedElements.includes(node.nodeName) == true){
+				doSearch.removeChild(node);
+			}
+        })
+        // %% STEP #1 : REMOVE UNEXPECTED DOM ELEMENTS %% //
+
+		// %% STEP #2 : EXTRACT DATA FROM STRUCTURE %% //
+		let myData = [];
+
+        childNodes.forEach((node, index) => {
+			if(index % 2 == 0){
+				let type = node.textContent;
+				const category = Array.from(node.nextSibling.querySelectorAll('td'))[0].textContent;
+				let items = Array.from(node.nextSibling.querySelectorAll('li'));
+				let arrayItems = [];
+				items.forEach(item => {
+					arrayItems.push(item.innerText);
+				})
+				let ret = {
+					type : type,
+					category : category,
+					items : arrayItems
+				};
+				myData.push(ret);
+			}
+        })
+		// %% STEP #2 : EXTRACT DATA FROM STRUCTURE %% //
+        return myData;
+    }, mappingItem);
+
+	//TODO
+
+    return doEvaluate;
+
+}
+
 function helper_getDate(dateString){
     let innerDateString = dateString.replace('\nConcluded','').replace('\nAttended','');
     let result = '';
