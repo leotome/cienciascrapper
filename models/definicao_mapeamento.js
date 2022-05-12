@@ -12,9 +12,12 @@ exports.cRud_getFullMapeamento = () => {
         "      ,[Map_Linha].[XPath_Pesquisa]        AS 'Map_Linha_XPath_Pesquisa'" +
         "      ,[Map_Linha].[ElementoEsperado]      AS 'Map_Linha_ElementoEsperado'" +
         "      ,[Map_Linha].[IndiceEsperado]        AS 'Map_Linha_IndiceEsperado'" +
+        "      ,[Map_Linha].[Boolean_PalavrasChave]        AS 'Map_Linha_Boolean_PalavrasChave'" +
         "  FROM [dbo].[Definicao_Mapeamento] [Map_Cabecalho]" +
         "  INNER JOIN [Definicao_Mapeamento_Tipo] [Tipo] ON [Tipo].[Id] = [Map_Cabecalho].[TipoDefinicao_FK]" +
-        "  LEFT OUTER JOIN [Definicao_Mapeamento_Linha] [Map_Linha] ON [Map_Cabecalho].[Id] = [Map_Linha].[Definicao_FK]"
+        "  LEFT OUTER JOIN [Definicao_Mapeamento_Linha] [Map_Linha] ON [Map_Cabecalho].[Id] = [Map_Linha].[Definicao_FK]" +
+        "  WHERE [Map_Cabecalho].[IsActive] = 1" + 
+        "  ORDER BY [Map_Cabecalho].[Ordem] ASC, [Map_Linha].[Ordem] ASC";
         sql.connect()
         .then(conn => {
             conn.pool.query(SQLQuery)
@@ -46,6 +49,7 @@ exports.cRud_getFullMapeamento = () => {
                             XPath_Pesquisa : record.Map_Linha_XPath_Pesquisa,
                             ElementoEsperado : record.Map_Linha_ElementoEsperado,
                             IndiceEsperado : record.Map_Linha_IndiceEsperado,
+                            Boolean_PalavrasChave : record.Map_Linha_Boolean_PalavrasChave
                         }
 
                         var header = properResponse.get(record.Map_Cabecalho_Id);
