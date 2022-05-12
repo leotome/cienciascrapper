@@ -3,23 +3,35 @@ const definicao_mapeamento = require('../models/config_models').definicao_mapeam
 
 exports.doScrapeVitae = async (cienciaID) => {
     const mapping = await definicao_mapeamento.cRud_getFullMapeamento();
-    const baseURL = 'https://www.cienciavitae.pt/portal/';
+    const baseURL = 'https://www.cienciavitae.pt/portal/en/';
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    /*
+    page.on('console', msg => {
+        for (let i = 0; i < msg.args().length; ++i){
+            console.log(`${i}: ${msg.args()[i]}`);
+        }
+    });
+    */
     await page.goto(baseURL + cienciaID);
 
     mapping.forEach(async (item) => {
         switch (item.Tipo) {
             case 'SIMPLES':
                 let myResult = await doSimpleScrape(item, page);
-                console.log(item.NomeTabela, myResult);
+                //console.log(item.NomeTabela, myResult);
                 break;            
-            case 'POLIMÓRFICO TABELA':
-                let myTable = await doTableScrape(item, page);
-                console.log(item.NomeTabela, myTable);
-                break;            
+            case 'POLIMÓRFICO TABELA 1':
+                let myTable1 = await doTableScrape_1(item, page);
+                //console.log(item.NomeTabela, myTable1);
+                break;
+            case 'POLIMÓRFICO TABELA 2':
+                let myTable2 = await doTableScrape_2(item, page);
+                console.log(item.NomeTabela, myTable2);
+                break;
             case 'POLIMÓRFICO LISTA':
-                
+                let myList = await doListScrape(item, page);
+                //console.log(item.NomeTabela, myList);
                 break;
         }
 
@@ -59,17 +71,17 @@ async function doSimpleScrape(mappingItem, pageReference) {
     return myResult;
 }
 
-async function doTableScrape(mappingItem, pageReference) {
+async function doTableScrape_1(mappingItem, pageReference) {
     let myResult = [];
 
     const doEvaluate = await pageReference.evaluate((mappingItem) => {
-        let doSearch = document.evaluate(mappingItem.XPath_Pesquisa, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         if(doSearch === undefined){
             return [];
         }
         const table =  Array.from(doSearch.querySelectorAll('tr'), row => {
-          const columns = row.querySelectorAll('td');
-          return Array.from(columns, column => column.innerText);
+            const columns = row.querySelectorAll('td');
+            return Array.from(columns, column => column.innerText);
         });
         return table;
     }, mappingItem);
@@ -94,6 +106,12 @@ async function doTableScrape(mappingItem, pageReference) {
                     case 'Texto':
                         myRecord[Linha.NomeCampo] = TableLine[Linha.IndiceEsperado];
                         break;
+                    case 'Boolean':
+                        myRecord[Linha.NomeCampo] = (TableLine[Linha.IndiceEsperado].includes(Linha.Boolean_PalavrasChave) == true) ? 1 : 0;
+                        break;
+                    case 'Integer':
+                        myRecord[Linha.NomeCampo] = parseInt(TableLine[Linha.IndiceEsperado].replace('\n','').trim());
+                        break;
                     default:
                         break;
                 }
@@ -104,11 +122,123 @@ async function doTableScrape(mappingItem, pageReference) {
     return myResult;
 }
 
+async function doTableScrape_2(mappingItem, pageReference) {
+    let myResult = [];
+
+    const doEvaluate = await pageReference.evaluate((mappingItem) => {
+        let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if(doSearch === undefined){
+            return [];
+        }
+        let childNodes = doSearch.childNodes;
+
+        // %% STEP #1 : REMOVE UNEXPECTED DOM ELEMENTS %% //
+        let unexpectedElements = ['#text'];
+
+        childNodes.forEach((node) => {
+			if(unexpectedElements.includes(node.nodeName) == true){
+				doSearch.removeChild(node);
+			}
+        });
+        // %% STEP #1 : REMOVE UNEXPECTED DOM ELEMENTS %% //
+
+		// %% STEP #2 : EXTRACT DATA FROM STRUCTURE %% //
+		let myData = [];
+
+        childNodes.forEach((node, index) => {
+			if(index % 2 == 0){
+				let type = node.textContent.replace('\n','').trim();
+                let data = node.nextSibling;
+                const table =  Array.from(data.querySelectorAll('tr'), row => {
+                    const columns = row.querySelectorAll('td');
+                    return Array.from(columns, column => column.innerText);
+                });                
+				let ret = {
+					type : type,
+					data : table
+				};
+				myData.push(ret);
+			}
+        })
+		// %% STEP #2 : EXTRACT DATA FROM STRUCTURE %% //
+        return myData;
+    }, mappingItem);
+
+    doEvaluate.forEach((RetLine) => {
+        if(RetLine.data.length > 0){
+            console.log(RetLine.data)
+            if(RetLine.data[0].length == 0){
+                RetLine.data.shift();
+            }
+
+            /*
+            let mainData = JSON.parse(JSON.stringify(RetLine.data[1]));
+            if(RetLine.data[2]){
+                RetLine.data[2].forEach((secDataLine_data, secDataLine_index) => {
+                    if(secDataLine_data != ''){
+                        mainData[secDataLine_index] += ' \n ' + secDataLine_data;
+                    }
+                })
+            }
+            let reWorkMainData = [mainData];
+            */
+           
+            RetLine.data.forEach((TableLine) => {
+                let myRecord = {};
+                myRecord['Tipo'] = RetLine.type;
+                mappingItem.Linhas.forEach((Linha) => {
+                    switch (Linha.TipoDado) {
+                        case 'Data':
+                            let awaitedField = Linha.NomeCampo.split(',');
+                            let datePayload = TableLine[Linha.IndiceEsperado].split(' - ');
+                            let startDateString = undefined;
+                            let endDateString = undefined;
+
+                            if(datePayload[1] && (datePayload[1].includes('Current'))){
+                                startDateString = datePayload[0];
+                                endDateString = undefined;
+                            } else
+                            if (datePayload[1] && !(datePayload[1].includes('Current'))){
+                                startDateString = datePayload[0];
+                                endDateString = datePayload[1];
+                            } else
+                            if(!datePayload[1]) {
+                                startDateString = undefined;
+                                endDateString = datePayload[0];
+                            }
+
+                            if(startDateString){
+                                myRecord[awaitedField[0]] = helper_getDate(startDateString);
+                            }
+                            if(endDateString){
+                                myRecord[awaitedField[1]] = helper_getDate(endDateString);
+                            }
+                            break;
+                        case 'Texto':
+                            myRecord[Linha.NomeCampo] = TableLine[Linha.IndiceEsperado];
+                            break;
+                        case 'Boolean':
+                            myRecord[Linha.NomeCampo] = (TableLine[Linha.IndiceEsperado].includes(Linha.Boolean_PalavrasChave) == true) ? 1 : 0;
+                            break;
+                        case 'Integer':
+                            myRecord[Linha.NomeCampo] = parseInt(TableLine[Linha.IndiceEsperado].replace('\n','').trim());
+                            break;
+                        default:
+                            break;
+                    }
+                })
+                myResult.push(myRecord);
+            })
+        }
+    })
+    return myResult;
+}
+
 async function doListScrape(mappingItem, pageReference) {
     let myResult = [];
 
     const doEvaluate = await pageReference.evaluate((mappingItem) => {
-        let doSearch = document.evaluate(mappingItem.XPath_Pesquisa, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         if(doSearch === undefined){
             return [];
         }
@@ -121,7 +251,7 @@ async function doListScrape(mappingItem, pageReference) {
 			if(unexpectedElements.includes(node.nodeName) == true){
 				doSearch.removeChild(node);
 			}
-        })
+        });
         // %% STEP #1 : REMOVE UNEXPECTED DOM ELEMENTS %% //
 
 		// %% STEP #2 : EXTRACT DATA FROM STRUCTURE %% //
@@ -129,7 +259,7 @@ async function doListScrape(mappingItem, pageReference) {
 
         childNodes.forEach((node, index) => {
 			if(index % 2 == 0){
-				let type = node.textContent;
+				let type = node.textContent.replace('\n','').trim();
 				const category = Array.from(node.nextSibling.querySelectorAll('td'))[0].textContent;
 				let items = Array.from(node.nextSibling.querySelectorAll('li'));
 				let arrayItems = [];
@@ -148,14 +278,22 @@ async function doListScrape(mappingItem, pageReference) {
         return myData;
     }, mappingItem);
 
-	//TODO
+    doEvaluate.forEach((RetLine) => {
+        let records = RetLine.items.map((item) => {
+            return {
+                Tipo : RetLine.type,
+                Categoria : RetLine.category,
+                Descricao : item
+            }
+        })
+        myResult = myResult.concat(records);
+    });
 
-    return doEvaluate;
-
+    return myResult;
 }
 
 function helper_getDate(dateString){
-    let innerDateString = dateString.replace('\nConcluded','').replace('\nAttended','');
+    let innerDateString = dateString.replace('\nConcluded','').replace('\nAttended','').replace('Current','');
     let result = '';
     switch (innerDateString.length) {
         case 10:
@@ -176,34 +314,3 @@ function helper_getDate(dateString){
     }
     return result;
 }
-
-/*
-(async () => {
-    const atributoPolimorficoTable_test = await page.evaluate(() => {
-      const elemento = document.evaluate('/html/body/div[3]/main/section/div[3]/div/div/div[2]/div/div/table', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-      const rows = elemento.querySelectorAll('tr');
-      return Array.from(rows, row => {
-        const columns = row.querySelectorAll('td');
-        return Array.from(columns, column => column.innerText);
-      });
-    });
-
-    if(debug_options.atributoPolimorficoTable_test){
-      console.log(atributoPolimorficoTable_test);
-    }
-
-    const atributoPolimorficoList_test = await page.evaluate(() => {
-      const elemento = document.evaluate('/html/body/div[3]/main/section/div[2]/div/div/div[2]/div/div/ul[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-      const items = elemento.querySelectorAll('li');
-      return Array.from(items, item => {
-        return item.innerText;
-      })
-    });
-
-    if(debug_options.atributoPolimorficoList_test){
-      console.log(atributoPolimorficoList_test);
-    }
-
-    await browser.close();
-})();
-*/
