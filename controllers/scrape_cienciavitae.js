@@ -129,12 +129,12 @@ async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
             
             // Se "document.evaluate()" retornar "undefined", então significa que a pesquisa pelo XPath retornou 0 elementos HTML.
             if(doSearch === undefined){
-                return null;
+                return undefined;
             }
 
             // Caso contrário, temos de ir à procura pelo "[ElementoEsperado]" nos nós irmãos/vizinhos ao elemento que pesquisamos.
             let searchFound = false;
-            let searchResult = null;
+            let searchResult = undefined;
     
             while(searchFound != true){
                 if(doSearch == null){
@@ -764,15 +764,15 @@ function helper_getDate(dateString){
     switch (innerDateString.length) {
         case 10:
             let dateString_fullDate = innerDateString;
-            result = dateString_fullDate.split('/')[0] + '-' + dateString_fullDate.split('/')[1] + '-' + dateString_fullDate.split('/')[2];
+            result = dateString_fullDate.split('/')[0] + dateString_fullDate.split('/')[1] + dateString_fullDate.split('/')[2];
             break;
         case 7:
             let dateString_monthYear = innerDateString;
-            result = dateString_monthYear.split('/')[0] + '-' + dateString_monthYear.split('/')[1] + '-' + '01';
+            result = dateString_monthYear.split('/')[0] + dateString_monthYear.split('/')[1] + '01';
             break;        
         case 4:
             let dateString_Year = innerDateString;
-            result = dateString_Year + '-' + '01' + '-' + '01';
+            result = dateString_Year + '01' + '01';
             break;
         default:
             result = null;
