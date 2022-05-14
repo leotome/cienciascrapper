@@ -23,6 +23,8 @@ exports.doScrapeVitae = async (cienciaID) => {
     const options = { headless : true };
     const browser = await puppeteer.launch(options);
 
+    let scraped = undefined;
+
     try {
         // Métodos implementados pela biblioteca "Puppeteer"
         // Navega para a página
@@ -41,29 +43,46 @@ exports.doScrapeVitae = async (cienciaID) => {
         // As tipologias estão definidas e devem respeitar ao que está configurado na tabela "Definicao_Mapeamento_Tipo" do servidor SQL.
         // Cada tipologia identificada requer extração num determinado formato, e por isso cada uma possui um método específico.
         // Caso necessário manutenção, deverá sofrer intervenção nos métodos abaixo listados. Atenção, é necessário conhecimentos sobre JavaScript e XPaths.
-        await Promise.all(mapping.map(async (item) => {
+        scraped = await Promise.all(mapping.map(async (item) => {
+            let result = null;
             switch (item.Tipo) {
                 case 'SIMPLES':
                     let myResult = await doSimpleScrape(item, page, GUID);
-                    //console.log(item.NomeTabela, myResult);
+                    result = {
+                        key : item.NomeTabela,
+                        value : myResult
+                    }
                     break;            
                 case 'POLIMÓRFICO TABELA 1':
                     let myTable1 = await doTableScrape_1(item, page, GUID);
-                    //console.log(item.NomeTabela, myTable1);
+                    result = {
+                        key : item.NomeTabela,
+                        value : myTable1
+                    }
                     break;
                 case 'POLIMÓRFICO TABELA 2':
                     let myTable2 = await doTableScrape_2(item, page, GUID);
-                    //console.log(item.NomeTabela, myTable2);
+                    result = {
+                        key : item.NomeTabela,
+                        value : myTable2
+                    }
                     break;
                 case 'POLIMÓRFICO TABELA 3':
                     let myTable3 = await doTableScrape_3(item, page, GUID);
-                    //console.log(item.NomeTabela, myTable3);
+                    result = {
+                        key : item.NomeTabela,
+                        value : myTable3
+                    }
                     break;
                 case 'POLIMÓRFICO LISTA':
                     let myList = await doListScrape(item, page, GUID);
-                    //console.log(item.NomeTabela, myList);
+                    result = {
+                        key : item.NomeTabela,
+                        value : myList
+                    }
                     break;
             }
+            return result;
         }))
     } catch(e){
         console.log('Error during Puppeteer execution! ', e);
@@ -72,7 +91,7 @@ exports.doScrapeVitae = async (cienciaID) => {
         // Encerra a sessão do browser
         await browser.close();
     }
-    return undefined;
+    return scraped;
 }
 
 async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
