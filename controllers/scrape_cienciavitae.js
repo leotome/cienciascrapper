@@ -651,7 +651,7 @@ function helper_formatTableData(configRow, tableRow){
 
             // Os formatos identificados são:
             // 1. "25/02/2020 - 25/03/2020" : representa início e fim;
-            // 2. "25/02/2020 - Current" : representa início, e indica que ainda está em curso;
+            // 2. "25/02/2020 - Atual" : representa início, e indica que ainda está em curso;
             // 3. "25/03/2020" : representa apenas o início ou apenas o fim, i.e. o intervalo de tempo está incompleto.
 
             // O pedaço de código que segue faz essa identificação do formato, e utiliza o método auxiliar "helper_getDate()" para traduzir em data yyyy-MM-dd.
@@ -671,8 +671,8 @@ function helper_formatTableData(configRow, tableRow){
             let endDateString = undefined;
 
             if((datePayload_upper != undefined)){
-                if(datePayload_upper.includes('Current')){
-                    // "25/02/2020 - Current" : representa início, e indica que ainda está em curso;
+                if(datePayload_upper.includes('Atual')){
+                    // "25/02/2020 - Atual" : representa início, e indica que ainda está em curso;
                     startDateString = datePayload_lower;
                     endDateString = undefined;
                 } else {
@@ -732,7 +732,7 @@ function helper_formatTableData(configRow, tableRow){
 
 function helper_getDate(dateString){
     // Normalização da string, por meio de substituição das palavras indesejadas.
-    let innerDateString = dateString.replace('\nConcluded','').replace('\nAttended','').replace('Current','');
+    let innerDateString = dateString.replace('\Concluído','').replace('\Frequentou','').replace('Atual','');
     let result = '';
     // Contempla 4 cenários de data:
     // 1. "25/02/2020". Representa a data completa.
