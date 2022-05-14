@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const crypto = require('crypto');
 const definicao_mapeamento = require('../models/config_models').definicao_mapeamento;
+const definicao_url = require('../models/config_models').definicao_url;
 
 exports.doScrapeVitae = async (cienciaID) => {
     // A chave primária da tabela "Curriculo" deve ser gerada neste método, para facilitar a ligação com FK no detalhe do CV.
@@ -13,56 +14,65 @@ exports.doScrapeVitae = async (cienciaID) => {
 
     // A URL de pesquisa está definida ao nível da tabela "Definicao_PaginaURL"
     // Caso necessário manutenção da URL, deve ser feito na tabela mencionada.
-    const baseURL = 'https://www.cienciavitae.pt/portal/en/'; //TODO
+    const allURLs = await definicao_url.cRud_getURLs();
+    const activeURL = allURLs.recordset.filter(({IsActive}) => IsActive == true);
+    const baseURL = (activeURL.length > 0) ? activeURL[0].URL : null;
 
-    // Métodos específicos da engine Chrominium
-    // Inicia e navega para a página
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(baseURL + cienciaID);
+    // Métodos implementados pela biblioteca "Puppeteer"
+    // Inicia uma sessão do browser "Chrominium"
+    const options = { headless : true };
+    const browser = await puppeteer.launch(options);
 
-    // Para debugging dentro do document.evaluate
-    /*
-    page.on('console', msg => {
-        for (let i = 0; i < msg.args().length; ++i){
-            console.log(`${i}: ${msg.args()[i]}`);
-        }
-    });
-    */
+    try {
+        // Métodos implementados pela biblioteca "Puppeteer"
+        // Navega para a página
+        const page = await browser.newPage();
+        await page.goto(baseURL + cienciaID);
+        // Para debugging dentro do document.evaluate
+        
+        /*
+        page.on('console', msg => {
+            for (let i = 0; i < msg.args().length; ++i){
+                console.log(`${i}: ${msg.args()[i]}`);
+            }
+        });
+        */
 
-    // As tipologias estão definidas e devem respeitar ao que está configurado na tabela "Definicao_Mapeamento_Tipo" do servidor SQL.
-    // Cada tipologia identificada requer extração num determinado formato, e por isso cada uma possui um método específico.
-    // Caso necessário manutenção, deverá sofrer intervenção nos métodos abaixo listados. Atenção, é necessário conhecimentos sobre JavaScript e XPaths.
-    mapping.forEach(async (item) => {
-        switch (item.Tipo) {
-            case 'SIMPLES':
-                let myResult = await doSimpleScrape(item, page, GUID);
-                //console.log(item.NomeTabela, myResult);
-                break;            
-            case 'POLIMÓRFICO TABELA 1':
-                let myTable1 = await doTableScrape_1(item, page, GUID);
-                //console.log(item.NomeTabela, myTable1);
-                break;
-            case 'POLIMÓRFICO TABELA 2':
-                let myTable2 = await doTableScrape_2(item, page, GUID);
-                //console.log(item.NomeTabela, myTable2);
-                break;
-            case 'POLIMÓRFICO TABELA 3':
-                let myTable3 = await doTableScrape_3(item, page, GUID);
-                //console.log(item.NomeTabela, myTable3);
-                break;
-            case 'POLIMÓRFICO LISTA':
-                let myList = await doListScrape(item, page, GUID);
-                //console.log(item.NomeTabela, myList);
-                break;
-        }
-
-    })
-
-    // Métodos específicos da engine Chrominium
-    // Finaliza a sessão do browser
-    await page.close();
-
+        // As tipologias estão definidas e devem respeitar ao que está configurado na tabela "Definicao_Mapeamento_Tipo" do servidor SQL.
+        // Cada tipologia identificada requer extração num determinado formato, e por isso cada uma possui um método específico.
+        // Caso necessário manutenção, deverá sofrer intervenção nos métodos abaixo listados. Atenção, é necessário conhecimentos sobre JavaScript e XPaths.
+        await Promise.all(mapping.map(async (item) => {
+            switch (item.Tipo) {
+                case 'SIMPLES':
+                    let myResult = await doSimpleScrape(item, page, GUID);
+                    //console.log(item.NomeTabela, myResult);
+                    break;            
+                case 'POLIMÓRFICO TABELA 1':
+                    let myTable1 = await doTableScrape_1(item, page, GUID);
+                    //console.log(item.NomeTabela, myTable1);
+                    break;
+                case 'POLIMÓRFICO TABELA 2':
+                    let myTable2 = await doTableScrape_2(item, page, GUID);
+                    //console.log(item.NomeTabela, myTable2);
+                    break;
+                case 'POLIMÓRFICO TABELA 3':
+                    let myTable3 = await doTableScrape_3(item, page, GUID);
+                    //console.log(item.NomeTabela, myTable3);
+                    break;
+                case 'POLIMÓRFICO LISTA':
+                    let myList = await doListScrape(item, page, GUID);
+                    //console.log(item.NomeTabela, myList);
+                    break;
+            }
+        }))
+    } catch(e){
+        console.log('Error during Puppeteer execution! ', e);
+    } finally {
+        // Métodos implementados pela biblioteca "Puppeteer"
+        // Encerra a sessão do browser
+        await browser.close();
+    }
+    return undefined;
 }
 
 async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
