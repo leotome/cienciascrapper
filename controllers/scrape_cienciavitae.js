@@ -751,7 +751,7 @@ function helper_formatTableData(configRow, tableRow){
 
 function helper_getDate(dateString){
     // Normalização da string, por meio de substituição das palavras indesejadas.
-    let innerDateString = dateString.replace('\Concluído','').replace('\Frequentou','').replace('Atual','');
+    let innerDateString = dateString.replace('\Concluído','').replace('\Frequentou','').replace('Atual','').trim();
     let result = '';
     // Contempla 4 cenários de data:
     // 1. "25/02/2020". Representa a data completa.
@@ -764,15 +764,15 @@ function helper_getDate(dateString){
     switch (innerDateString.length) {
         case 10:
             let dateString_fullDate = innerDateString;
-            result = dateString_fullDate.split('/')[0] + dateString_fullDate.split('/')[1] + dateString_fullDate.split('/')[2];
+            result = dateString_fullDate.split('/')[0] + '-' + dateString_fullDate.split('/')[1] + '-' +  dateString_fullDate.split('/')[2];
             break;
         case 7:
             let dateString_monthYear = innerDateString;
-            result = dateString_monthYear.split('/')[0] + dateString_monthYear.split('/')[1] + '01';
+            result = dateString_monthYear.split('/')[0] + '-' + dateString_monthYear.split('/')[1] + '-' + '01';
             break;        
         case 4:
             let dateString_Year = innerDateString;
-            result = dateString_Year + '01' + '01';
+            result = dateString_Year + '-' + '01' + '-' + '01';
             break;
         default:
             result = null;
