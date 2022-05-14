@@ -1,39 +1,31 @@
 const sql = require('./config_sql');
-const utils = require('../utils/utils');
 
 exports.Crud_setRecord = (params) => {
     return new Promise((resolve, reject) => {
-        let expectedOrder = {
-            Id : 0,
-            NomeCompleto : 1,
-            NomesCitacao : 2,
-            Resumo : 3,
-            CienciaId : 4,
-            OrcidId : 5,
-            GoogleScholarId : 6,
-            ResearcherId : 7,
-            ScopusAuthorId : 8,
-            Moradas : 9,
-            Emails : 10,
-            DominiosAtuacao : 11,
-            DataExtracao : 12
-        }
-        let payload = [];
-        
-        params.forEach((param) => {
-            let localPayload = [];
-            Object.keys(expectedOrder).forEach(key => {
-                let value = expectedOrder[key];
-                let data = (param[key] != undefined) ? param[key] : null;
-                localPayload = utils.arrayInsertAt(localPayload, value, data);
-            })
-            payload.push(localPayload);
-        })
-
-        let statement = "INSERT INTO [Curriculo] ([Id],[NomeCompleto],[NomesCitacao],[Resumo],[CienciaId],[OrcidId],[GoogleScholarId],[ResearcherId],[ScopusAuthorId],[Moradas],[Emails],[DominiosAtuacao],[DataExtracao]) VALUES ?";
         sql.connect()
         .then(conn => {
-            conn.pool.query(statement, payload)
+            let TABLE_NAME = 'Curriculo';
+            let COLUMNS = [];
+            let VALUES = [];
+            
+            const request = conn.pool.request();
+
+            Object.keys(params).forEach((key, index) => {
+                let value = params[key];
+                if(value != undefined){
+                    COLUMNS.push(key);
+                    VALUES.push(value);
+                    
+                }
+            })
+
+            VALUES.forEach((val, index) => {
+                request.input(`param_${index}`, val);
+            })
+            
+            const statement = `INSERT INTO ${TABLE_NAME}(${COLUMNS}) VALUES (${VALUES.map((_,i) => '@param_' + i)})`;
+
+            request.query(statement)
             .then(response => {
                 resolve(response);
             })
