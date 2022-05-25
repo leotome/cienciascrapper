@@ -128,7 +128,7 @@ async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
             let doSearch = document.evaluate(Linha.XPath_Pesquisa, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             
             // Se "document.evaluate()" retornar "undefined", então significa que a pesquisa pelo XPath retornou 0 elementos HTML.
-            if(doSearch === undefined){
+            if(doSearch === undefined || doSearch == null){
                 return undefined;
             }
 
@@ -183,7 +183,7 @@ async function doTableScrape_1(mappingItem, pageReference, foreignKey) {
         let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         
         // Se "document.evaluate()" retornar "undefined", então significa que a pesquisa pelo XPath retornou 0 elementos HTML.
-        if(doSearch === undefined){
+        if(doSearch === undefined || doSearch == null){
             return [];
         }
 
@@ -264,7 +264,7 @@ async function doTableScrape_2(mappingItem, pageReference, foreignKey) {
         let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
         // Se "document.evaluate()" retornar "undefined", então significa que a pesquisa pelo XPath retornou 0 elementos HTML.
-        if(doSearch === undefined){
+        if(doSearch === undefined || doSearch == null){
             return [];
         }
 
@@ -405,7 +405,7 @@ async function doTableScrape_3(mappingItem, pageReference, foreignKey) {
         // Para conveniência, utilizamos a property/parâmetro "singleNodeValue", que retorna um objeto do tipo "Node".
         // Para mais informações, consultar a documentação em https://developer.mozilla.org/en-US/docs/Web/API/Node
         let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        if(doSearch === undefined){
+        if(doSearch === undefined || doSearch == null){
             return [];
         }
 
@@ -576,7 +576,7 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
         let doSearch = document.evaluate(mappingItem.XPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         
         // Se "document.evaluate()" retornar "undefined", então significa que a pesquisa pelo XPath retornou 0 elementos HTML.
-        if(doSearch === undefined){
+        if(doSearch === undefined || doSearch == null){
             return [];
         }
 
