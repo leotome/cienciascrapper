@@ -1,8 +1,12 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
+
+require("./routes/routes")(app);
 
 const PORT = process.env.PORT || 8000;
 
@@ -12,6 +16,7 @@ app.listen(PORT, () => {
 
 app.use(express.static("public_html"));
 
+/*
 const test = require('./controllers/scrape_cienciavitae');
 const models = require('./models/config_models');
 (async () => {
@@ -66,3 +71,4 @@ const models = require('./models/config_models');
 })();
 
 
+*/

@@ -1,6 +1,6 @@
 const sql = require('./config_sql');
 
-exports.cRud_usersByEmail = (param) => {
+exports.cRud_usersByUsername = (param) => {
     return new Promise((resolve, reject) => {
         let SQLQuery = "SELECT [Id]" + 
         "                     ,[Username]" + 
@@ -8,8 +8,10 @@ exports.cRud_usersByEmail = (param) => {
         "                     ,[FirstName]" + 
         "                     ,[LastName]" + 
         "                     ,[Password]" + 
+        "                     ,[Type_FK]" + 
+        "                     ,[IsActive]" + 
         "              FROM [User]" + 
-        "              WHERE [Email]= '" + param + "'";
+        "              WHERE [Username]= '" + param + "'";
         sql.connect()
         .then(conn => {
             conn.pool.query(SQLQuery)
@@ -30,7 +32,7 @@ exports.cRud_usersByEmail = (param) => {
 
 exports.Crud_registerUser = (param) => {
     return new Promise((resolve, reject) => {
-        let SQLQuery = `INSERT INTO [User] ([Username], [Email], [FirstName], [LastName], [Password]) VALUES ('${param.Username}', '${param.Email}', '${param.FirstName}', '${param.LastName}', '${param.Password}')`
+        let SQLQuery = `INSERT INTO [User] ([Username], [FirstName], [LastName], [Password], [Type_FK]) VALUES ('${param.Username}', '${param.FirstName}', '${param.LastName}', '${param.Password}', 1)`
         sql.connect()
         .then(conn => {
             conn.pool.query(SQLQuery)

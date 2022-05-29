@@ -9,6 +9,7 @@ const curriculo_producao = require('./curriculo_producao');
 const curriculo_actividade = require('./curriculo_actividade');
 const curriculo_distincao = require('./curriculo_distincao');
 const user = require('./user');
+const appmenu = require('./appmenu');
 
 module.exports = {
     definicao_mapeamento : definicao_mapeamento,
@@ -21,5 +22,6 @@ module.exports = {
     curriculo_producao : curriculo_producao,
     curriculo_actividade : curriculo_actividade,
     curriculo_distincao : curriculo_distincao,
-    user : user
+    user : user,
+    appmenu : appmenu
 }
