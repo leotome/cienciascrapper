@@ -20,11 +20,13 @@ module.exports = app => {
     // @table : AppMenu
     router.get('/config/menus', controller.appmenu.cRud_getMenusForUser);
 
-    
+    // @http-verb : post
+    // @table : Curriculo*
+    router.post('/search/find', controller.search.cRud_doSearchCVs);
 
-    // @http-verb : get
-    // @table : User
-    router.get('/cv', () => {return null;});
+    // @http-verb : post
+    // @table : Curriculo*
+    router.post('/scrape/cienciavitae', controller.scrape.Crud_doScrapeCVs);
 
     app.use('/api', router);
 }

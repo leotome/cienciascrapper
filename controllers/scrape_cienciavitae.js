@@ -24,6 +24,7 @@ exports.doScrapeVitae = async (cienciaID) => {
     const browser = await puppeteer.launch(options);
 
     let scraped = undefined;
+    let failedExtract = false;
 
     try {
         // Métodos implementados pela biblioteca "Puppeteer"
@@ -40,6 +41,12 @@ exports.doScrapeVitae = async (cienciaID) => {
         });
         */
 
+        page.on('response', res => {
+            if(res.status() > 300){
+                return undefined;
+            }
+        });
+
         // As tipologias estão definidas e devem respeitar ao que está configurado na tabela "Definicao_Mapeamento_Tipo" do servidor SQL.
         // Cada tipologia identificada requer extração num determinado formato, e por isso cada uma possui um método específico.
         // Caso necessário manutenção, deverá sofrer intervenção nos métodos abaixo listados. Atenção, é necessário conhecimentos sobre JavaScript e XPaths.
@@ -51,6 +58,9 @@ exports.doScrapeVitae = async (cienciaID) => {
                     result = {
                         key : item.NomeTabela,
                         value : myResult
+                    }
+                    if(myResult == undefined){
+                        failedExtract = true;
                     }
                     break;            
                 case 'POLIMÓRFICO TABELA 1':
@@ -91,7 +101,7 @@ exports.doScrapeVitae = async (cienciaID) => {
         // Encerra a sessão do browser
         await browser.close();
     }
-    return scraped;
+    return (failedExtract == true) ? undefined : scraped;
 }
 
 async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
@@ -149,12 +159,14 @@ async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
             }
             return searchResult;
         }, Linha);
-        myResult[Linha.NomeCampo] = doEvaluate;
+        if(doEvaluate != undefined){
+            myResult[Linha.NomeCampo] = doEvaluate;
+        }
     }));
     // ## PASSO #1 : ITERAR SOBRE CADA LINHA, PESQUISAR NA PÁGINA PELO XPATH, E SE ENCONTRAR GUARDAR A INFORMAÇÃO ## //
     
     // Terminada a extração.
-    return myResult;
+    return (Object.keys(myResult).length == 1) ? undefined : myResult;
 }
 
 async function doTableScrape_1(mappingItem, pageReference, foreignKey) {

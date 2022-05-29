@@ -74,14 +74,14 @@ function doGetFilters(){
     const Type1 = [
         { label : "Contém", value : "LIKE", type : "text" },
         { label : "Não contém", value : "NOT_LIKE", type : "text" },
-        { label : "Iniciado em (mês-ano)", value : "MONTHYEAR_LESS_START", type : "month-year" },
-        { label : "Concluído em (mês-ano)", value : "MONTHYEAR_LESS_END", type : "month-year"},
-        { label : "Iniciado até (mês-ano)", value : "MONTHYEAR_GREATER_START", type : "month-year" },
-        { label : "Concluído até (mês-ano)", value : "MONTHYEAR_GREATER_END", type : "month-year"},
-        { label : "Iniciado em (ano)", value : "YEAR_LESS_START", type : "year" },
-        { label : "Concluído em (ano)", value : "YEAR_LESS_END", type : "year"},
-        { label : "Iniciado até (ano)", value : "YEAR_GREATER_START", type : "year" },
-        { label : "Concluído até (ano)", value : "YEAR_GREATER_END", type : "year"}
+        { label : "Iniciado em (mês-ano)", value : "MONTHYEAR_GREATER_START", type : "month-year" },
+        { label : "Concluído em (mês-ano)", value : "MONTHYEAR_GREATER_END", type : "month-year"},
+        { label : "Iniciado até (mês-ano)", value : "MONTHYEAR_LESS_START", type : "month-year" },
+        { label : "Concluído até (mês-ano)", value : "MONTHYEAR_LESS_END", type : "month-year"},
+        { label : "Iniciado em (ano)", value : "YEAR_GREATER_START", type : "year" },
+        { label : "Concluído em (ano)", value : "YEAR_GREATER_END", type : "year"},
+        { label : "Iniciado até (ano)", value : "YEAR_LESS_START", type : "year" },
+        { label : "Concluído até (ano)", value : "YEAR_LESS_END", type : "year"}
 
     ]
     
@@ -236,5 +236,28 @@ function doSubmitSearch(){
             criteria.push(item);
         }
     })
-    // TODO
+    if(criteria.length == 0){
+        return;
+    }
+    let cienciavitae_filters_button = document.getElementById('cienciavitae_filters_button');
+    cienciavitae_filters_button.disabled = true;
+    let request_url = getAPIURI() + '/search/find';
+    let request_params = {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        method : "POST",
+        body : JSON.stringify(criteria)
+    }
+    fetch(request_url, request_params)
+    .then(async (response) => {
+        var result = await response.json();
+        if(result.message){
+            alert(result.message);
+        }
+        console.log('doSubmitSearch().result', result);
+    })
+    .catch(async (error) => {
+        alert('doSubmitSearch().error = ' + JSON.stringify(error));
+    }) 
 }
