@@ -735,10 +735,12 @@ function helper_formatTableData(configRow, tableRow){
             break;
         case 'Texto':
             // Para o tipo de "texto", não são feitas conversões.
-            result.push({
-                key : configRow.NomeCampo,
-                value : tableRow[configRow.IndiceEsperado].trim()
-            });
+            if(tableRow[configRow.IndiceEsperado]){
+                result.push({
+                    key : configRow.NomeCampo,
+                    value : tableRow[configRow.IndiceEsperado].trim()
+                });
+            }
             break;
         case 'Boolean':
             // Para o tipo de "boolean", é obrigatório que o campo [Definicao_Mapeamento_Linha].[Boolean_PalavrasChave] esteja preenchido.
