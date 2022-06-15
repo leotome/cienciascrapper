@@ -281,7 +281,7 @@ function doSubmitSearch(){
             let result_HTML_TableHeader = '<thead><tr><th>Ciência Id</th><th>Nome</th><th>Data da última inserção</th></tr></thead>';
             let result_HTML_TableLines = '';
             result.forEach((curriculum_record) => {
-                let result_HTML_TableLine = `<tr><td>${curriculum_record.CienciaId}</td><td>${curriculum_record.NomeCompleto}</td><td>${curriculum_record.DataExtracao}</td></tr>`
+                let result_HTML_TableLine = `<tr><td><a href="/curriculum.html?id=${curriculum_record.Id}" target="_blank" style="color: blue; text-decoration: underline;">${curriculum_record.CienciaId}</a></td><td>${curriculum_record.NomeCompleto}</td><td>${curriculum_record.DataExtracao}</td></tr>`
                 result_HTML_TableLines += result_HTML_TableLine;
             })
             result_HTML += '<table style="width: 100%;">' + result_HTML_TableHeader + '<tbody>' + result_HTML_TableLines + '</tbody></table>'
@@ -290,7 +290,6 @@ function doSubmitSearch(){
         }
         let cienciavitae_results_container = document.getElementById('cienciavitae_results_container');
         cienciavitae_results_container.innerHTML = result_HTML;
-
     })
     .catch(async (error) => {
         alert('doSubmitSearch().error = ' + JSON.stringify(error));
