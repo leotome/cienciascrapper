@@ -99,3 +99,39 @@ exports.cRud_getAll = () => {
         })
     });
 }
+
+exports.cRud_getById = (params) => {
+    return new Promise((resolve, reject) => {
+        let SQLQuery = "SELECT [Id]" + 
+        "      ,[NomeCompleto]" + 
+        "      ,[NomesCitacao]" + 
+        "      ,[Resumo]" + 
+        "      ,[CienciaId]" + 
+        "      ,[OrcidId]" + 
+        "      ,[GoogleScholarId]" + 
+        "      ,[ResearcherId]" + 
+        "      ,[ScopusAuthorId]" + 
+        "      ,[Moradas]" + 
+        "      ,[Emails]" + 
+        "      ,[DominiosAtuacao]" + 
+        "      ,[DataExtracao]" + 
+        "      ,[UltimaExtracao]" + 
+        "FROM [Curriculo]" +
+        "WHERE [Id] = '" + params.Id + "'";
+        sql.connect()
+        .then(conn => {
+            conn.pool.query(SQLQuery)
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                console.log('Error on cRud_getById(), conn.pool.query', error);
+                reject(error);
+            });
+        })
+        .catch(err => {
+            console.log('Error on cRud_getById(), sql.connect', err);
+            reject(err);
+        })
+    });
+}

@@ -28,5 +28,45 @@ module.exports = app => {
     // @table : Curriculo*
     router.post('/scrape/cienciavitae', controller.scrape.Crud_doScrapeCVs);
 
+    // @http-verb : get
+    // @table : Curriculo
+    // @param : expects { "Id" : string }
+    router.get('/curriculum/header/:Id', controller.curriculo.cRud_getById);
+
+    // @http-verb : get
+    // @table : Curriculo_Actividade
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/activities/:Curriculo_FK', controller.curriculo_actividade.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Curriculo_Distincao
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/distinctions/:Curriculo_FK', controller.curriculo_distincao.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Curriculo_PercursoProfissional
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/affiliations/:Curriculo_FK', controller.curriculo_percurso_profissional.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Curriculo_Formacao
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/education/:Curriculo_FK', controller.curriculo_formacao.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Curriculo_Producao
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/outputs/:Curriculo_FK', controller.curriculo_producao.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Curriculo_Projecto
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/projects/:Curriculo_FK', controller.curriculo_projecto.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Curriculo_ProeficienciaIdioma
+    // @param : expects { "Curriculo_FK" : string }
+    router.get('/curriculum/languages/:Curriculo_FK', controller.curriculo_proeficiencia_idioma.cRud_getByCurriculoFK);    
+
     app.use('/api', router);
 }

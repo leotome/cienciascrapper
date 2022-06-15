@@ -68,3 +68,32 @@ exports.cRud_getAll = () => {
         })
     });
 }
+
+exports.cRud_getByCurriculoFK = (params) => {
+    return new Promise((resolve, reject) => {
+        let SQLQuery = "SELECT [Id]" +
+        "     ,[Curriculo_FK]" +
+        "     ,[PeriodoInicio]" +
+        "     ,[PeriodoFim]" +
+        "     ,[Grau]" +
+        "     ,[Instituicao]" +
+        "     ,[Classificacao]" +
+        "FROM [Curriculo_Formacao]" + 
+        "WHERE [Curriculo_FK] = '" + params.Id + "'";
+        sql.connect()
+        .then(conn => {
+            conn.pool.query(SQLQuery)
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                console.log('Error on cRud_getByCurriculoFK(), conn.pool.query', error);
+                reject(error);
+            });
+        })
+        .catch(err => {
+            console.log('Error on cRud_getByCurriculoFK(), sql.connect', err);
+            reject(err);
+        })
+    });
+}
