@@ -133,8 +133,8 @@ function retrieveEducation(recordId){
             let table_Lines = '';
 
             result.forEach(record => {
-                let periodoInicio_Text = (record.PeriodoInicio != undefined) ? new Date(record.PeriodoInicio).toLocaleDateString() : undefined;
-                let periodoFim_Text    = (record.PeriodoFim != undefined)    ? new Date(record.PeriodoFim).toLocaleDateString()    : undefined;
+                let periodoInicio_Text = (record.PeriodoInicio != undefined) ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoInicio).getFullYear()) : undefined;
+                let periodoFim_Text    = (record.PeriodoFim != undefined)    ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoFim).getFullYear())       : undefined;
                 let periodoText = (periodoInicio_Text != undefined) ? `${periodoInicio_Text} - ${periodoFim_Text}` : `${periodoFim_Text}`;
                 if(record.Concluido){
                     periodoText += '<br/><sub>Concluído</sub>';
@@ -155,7 +155,6 @@ function retrieveEducation(recordId){
 }
 
 function retrieveAffiliations(recordId){
-    let cienciavitae_percurso_profissional = document.getElementById('cienciavitae_percurso_profissional');
     let request_url = getAPIURI() + '/curriculum/affiliations/' + recordId;
     let request_params = {
         method : "GET"
@@ -165,8 +164,46 @@ function retrieveAffiliations(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
-        console.log('retrieveAffiliations().result => ', result);
+        if(result.length > 0){
+            const summaryText = 'Percurso profissional';
+            let details_Header = `<details open><summary>${summaryText}</summary>`;
+            let allTypes_Container = '';
+
+            let GroupedTypes = [];
+            result.forEach(record => {
+                let item = GroupedTypes.find(({type}) => type == record.Tipo);
+                if(item != undefined){
+                    item.values.push(record);
+                } else {
+                    let newItem = {type : record.Tipo, values : []};
+                    newItem.values.push(record);
+                    GroupedTypes.push(newItem);
+                }
+            })
+
+            GroupedTypes.forEach(item => {
+                let type_Title = '<h5><b>' + item.type + '</b></h5>';
+                let table_Header = '<thead><tr><th>Período</th><th>Descrição</th><th>Empregador</th></tr></thead>';
+                let table_Lines = '';
+                item.values.forEach(record => {
+                    let periodoInicio_Text = (record.PeriodoInicio != undefined) ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoInicio).getFullYear()) : undefined;
+                    let periodoFim_Text    = (record.PeriodoFim != undefined)    ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoFim).getFullYear())       : undefined;
+                    let periodoText = (periodoFim_Text != undefined) ? `${periodoInicio_Text} - ${periodoFim_Text}` : `${periodoInicio_Text} - Atual`;
+                    if(record.Atual){
+                        periodoText += '<br/><sub>Atual</sub>';
+                    }
+                    let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 20%;">${periodoText}</td><td style="vertical-align:top; width: 60%;">${record.CategoriaInstituicao}</td><td style="vertical-align:top;width: 20%;">${record.Empregador}</td></tr>`;
+                    table_Lines += table_Line;
+                })
+                allTypes_Container += type_Title + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+            })
+
+            let result_HTML = details_Header + allTypes_Container + '</details>';
+            let cienciavitae_percurso_profissional = document.getElementById('cienciavitae_percurso_profissional');
+            cienciavitae_percurso_profissional.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
+        }
     })
     .catch(async (error) => {
         alert('retrieveAffiliations().error = ' + JSON.stringify(error));
@@ -174,7 +211,6 @@ function retrieveAffiliations(recordId){
 }
 
 function retrieveProjects(recordId){
-    let cienciavitae_projetos = document.getElementById('cienciavitae_projetos');
     let request_url = getAPIURI() + '/curriculum/projects/' + recordId;
     let request_params = {
         method : "GET"
@@ -184,8 +220,44 @@ function retrieveProjects(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
-        console.log('retrieveProjects().result => ', result);
+        if(result.length > 0){
+            const summaryText = 'Projetos';
+            let details_Header = `<details open><summary>${summaryText}</summary>`;
+            let allTypes_Container = '';
+
+            let GroupedTypes = [];
+            result.forEach(record => {
+                let item = GroupedTypes.find(({type}) => type == record.Tipo);
+                if(item != undefined){
+                    item.values.push(record);
+                } else {
+                    let newItem = {type : record.Tipo, values : []};
+                    newItem.values.push(record);
+                    GroupedTypes.push(newItem);
+                }
+            })
+
+            GroupedTypes.forEach(item => {
+                let type_Title = '<h5><b>' + item.type + '</b></h5>';
+                let table_Header = '<thead><tr><th>Período</th><th>Designação</th><th>Financiadores</th></tr></thead>';
+                let table_Lines = '';
+                item.values.forEach(record => {
+                    let periodoInicio_Text = (record.PeriodoInicio != undefined) ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoInicio).getFullYear()) : undefined;
+                    let periodoFim_Text    = (record.PeriodoFim != undefined)    ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoFim).getFullYear())       : undefined;
+                    let periodoText = (periodoFim_Text != undefined) ? `${periodoInicio_Text} - ${periodoFim_Text}` : `${periodoInicio_Text} - Atual`;
+                    let financiadores_Text = (record.Financiadores != undefined) ? record.Financiadores : '';
+                    let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 20%;">${periodoText}</td><td style="vertical-align:top; width: 60%;">${record.Designacao}</td><td style="vertical-align:top;width: 20%;">${financiadores_Text}</td></tr>`;
+                    table_Lines += table_Line;
+                })
+                allTypes_Container += type_Title + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+            })
+
+            let result_HTML = details_Header + allTypes_Container + '</details>';
+            let cienciavitae_projetos = document.getElementById('cienciavitae_projetos');
+            cienciavitae_projetos.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
+        }        
     })
     .catch(async (error) => {
         alert('retrieveProjects().error = ' + JSON.stringify(error));
