@@ -50,6 +50,7 @@ exports.cRud_getAll = () => {
         "     ,[PeriodoFim]" +
         "     ,[Descricao]" +
         "     ,[CursoInstituicao]" +
+        "     ,[Atual]" +
         "FROM [Curriculo_Actividade]";
         sql.connect()
         .then(conn => {
@@ -78,6 +79,7 @@ exports.cRud_getByCurriculoFK = () => {
         "     ,[PeriodoFim]" +
         "     ,[Descricao]" +
         "     ,[CursoInstituicao]" +
+        "     ,[Atual]" +
         "FROM [Curriculo_Actividade]" + 
         "WHERE [Curriculo_FK] = '" + params.Id + "'";
         sql.connect()

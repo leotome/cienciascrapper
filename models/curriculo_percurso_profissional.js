@@ -51,6 +51,7 @@ exports.cRud_getAll = () => {
         "     ,[Tipo]" +
         "     ,[CategoriaInstituicao]" +
         "     ,[Empregador]" +
+        "     ,[Atual]" +
         "FROM [Curriculo_PercursoProfissional]";
         sql.connect()
         .then(conn => {
@@ -79,6 +80,7 @@ exports.cRud_getByCurriculoFK = () => {
         "     ,[Tipo]" +
         "     ,[CategoriaInstituicao]" +
         "     ,[Empregador]" +
+        "     ,[Atual]" +
         "FROM [Curriculo_PercursoProfissional]" +
         "WHERE [Curriculo_FK] = '" + params.Id + "'";
         sql.connect()

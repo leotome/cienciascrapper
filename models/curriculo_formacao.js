@@ -47,8 +47,8 @@ exports.cRud_getAll = () => {
         "     ,[Curriculo_FK]" +
         "     ,[PeriodoInicio]" +
         "     ,[PeriodoFim]" +
-        "     ,[Grau]" +
-        "     ,[Instituicao]" +
+        "     ,[Descricao]" +
+        "     ,[Concluido]" +
         "     ,[Classificacao]" +
         "FROM [Curriculo_Formacao]";
         sql.connect()
@@ -75,8 +75,8 @@ exports.cRud_getByCurriculoFK = (params) => {
         "     ,[Curriculo_FK]" +
         "     ,[PeriodoInicio]" +
         "     ,[PeriodoFim]" +
-        "     ,[Grau]" +
-        "     ,[Instituicao]" +
+        "     ,[Descricao]" +
+        "     ,[Concluido]" +
         "     ,[Classificacao]" +
         "FROM [Curriculo_Formacao]" + 
         "WHERE [Curriculo_FK] = '" + params.Id + "'";
