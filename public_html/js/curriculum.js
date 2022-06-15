@@ -37,6 +37,7 @@ function retrieveHeader(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
 
         var header = result[0];
@@ -46,8 +47,6 @@ function retrieveHeader(recordId){
         cienciavitae_header_fullname.innerHTML = '<h2>' + header.NomeCompleto + '</h2>';
         let cienciavitae_header_resumo = document.getElementById('cienciavitae_header_resumo');
         cienciavitae_header_resumo.innerHTML = (header.Resumo != undefined) ? '<h6>' + header.Resumo + '</h6>' : '';
-
-        let result_HTML = '';
 
         const summaryText = 'Identificação';
         let details_Header = `<details open><summary>${summaryText}</summary>`;
@@ -105,6 +104,7 @@ function retrieveHeader(recordId){
         */
         let fields_Container = (header.DominiosAtuacao != undefined) ? '<div>' + fields_Header + attributeValue_TypeElement_Open + header.DominiosAtuacao + attributeValue_TypeElement_Close + '</div>' : '';
         
+        let result_HTML = '';
         result_HTML += details_Header + personalIdentification_Container + citationNames_Container + identifiers_Container + addresses_Container + emails_Container + fields_Container + '</details>';
         let cienciavitae_header = document.getElementById('cienciavitae_header');
         cienciavitae_header.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
@@ -115,7 +115,6 @@ function retrieveHeader(recordId){
 }
 
 function retrieveEducation(recordId){
-    let cienciavitae_formacao = document.getElementById('cienciavitae_formacao');
     let request_url = getAPIURI() + '/curriculum/education/' + recordId;
     let request_params = {
         method : "GET"
@@ -125,8 +124,30 @@ function retrieveEducation(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
-        console.log('retrieveEducation().result => ', result);
+        if(result.length > 0){
+            const summaryText = 'Formação';
+            let details_Header = `<details open><summary>${summaryText}</summary>`;
+            let table_Header = '<thead><tr><th>Período</th><th>Descrição</th><th>Classificação</th></tr></thead>';
+            let table_Lines = '';
+
+            result.forEach(record => {
+                let periodoInicio_Text = (record.PeriodoInicio != undefined) ? new Date(record.PeriodoInicio).toLocaleDateString() : undefined;
+                let periodoFim_Text    = (record.PeriodoFim != undefined)    ? new Date(record.PeriodoFim).toLocaleDateString()    : undefined;
+                let periodoText = (periodoInicio_Text != undefined) ? `${periodoInicio_Text} - ${periodoFim_Text}` : `${periodoFim_Text}`;
+                if(record.Concluido){
+                    periodoText += '<br/><sub>Concluído</sub>';
+                }
+                let classificacaoText = (record.Classificacao != undefined) ? record.Classificacao : '';
+                let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;">${periodoText}</td><td style="vertical-align:top; width: 70%;">${record.Descricao}</td><td style="white-space:nowrap; vertical-align:top;">${classificacaoText}</td></tr>`;
+                table_Lines += table_Line;
+            })
+
+            let result_HTML = details_Header + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table>' + '</details>';
+            let cienciavitae_formacao = document.getElementById('cienciavitae_formacao');
+            cienciavitae_formacao.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
+        }
     })
     .catch(async (error) => {
         alert('retrieveEducation().error = ' + JSON.stringify(error));
