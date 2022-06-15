@@ -1,4 +1,5 @@
 const utils = require("./config_utils");
+const generic = require("../models/config_models").generic;
 
 exports.cRud_doSearchCVs = async (req, res) => {
     let TokenData = utils.authenticateToken(req);
@@ -30,7 +31,21 @@ exports.cRud_doSearchCVs = async (req, res) => {
                 if(item.type == "NOT_LIKE"){
                     filter = "[Curriculo_Actividade].[Tipo] NOT LIKE '%" + item.value + "%' OR [Curriculo_Actividade].[Descricao] NOT LIKE '%" + item.value + "%' OR [Curriculo_Actividade].[CursoInstituicao] NOT LIKE '%" + item.value + "%'";
                 }
-                // TODO
+                if(item.type == "MONTHYEAR_GREATER_START"){
+                    filter = "[Curriculo_Actividade].[PeriodoInicio] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_GREATER_END"){
+                    filter = "[Curriculo_Actividade].[PeriodoFim] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_START"){
+                    filter = "[Curriculo_Actividade].[PeriodoInicio] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_END"){
+                    filter = "[Curriculo_Actividade].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "IS_ACTUAL"){
+                    filter = "[Curriculo_Actividade].[Atual] = " + (item.value === "SIM") ? "1" : "0" + "";
+                }
                 break;
             case "Curriculo_Distincao":
                 if(item.type == "LIKE"){
@@ -39,7 +54,12 @@ exports.cRud_doSearchCVs = async (req, res) => {
                 if(item.type == "NOT_LIKE"){
                     filter = "[Curriculo_Distincao].[Tipo] NOT LIKE '%" + item.value + "%' OR [Curriculo_Distincao].[Descricao] NOT LIKE '%" + item.value + "%'";
                 }
-                // TODO
+                if(item.type == "YEAR_GREATER_START"){
+                    filter = "[Curriculo_Distincao].[Ano] >= " + item.value + "";
+                }
+                if(item.type == "YEAR_LESS_END"){
+                    filter = "[Curriculo_Distincao].[Ano] <= " + item.value + "";
+                }
                 break;
             case "Curriculo_Formacao":
                 if(item.type == "LIKE"){
@@ -48,7 +68,21 @@ exports.cRud_doSearchCVs = async (req, res) => {
                 if(item.type == "NOT_LIKE"){
                     filter = "[Curriculo_Formacao].[Descricao] NOT LIKE '%" + item.value + "%'";
                 }
-                // TODO
+                if(item.type == "MONTHYEAR_GREATER_START"){
+                    filter = "[Curriculo_Formacao].[PeriodoInicio] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_GREATER_END"){
+                    filter = "[Curriculo_Formacao].[PeriodoFim] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_START"){
+                    filter = "[Curriculo_Formacao].[PeriodoInicio] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_END"){
+                    filter = "[Curriculo_Formacao].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "IS_ACTUAL"){
+                    filter = "[Curriculo_Formacao].[Concluido] = " + (item.value === "SIM") ? "0" : "1" + "";
+                }
                 break;
             case "Curriculo_PercursoProfissional":
                 if(item.type == "LIKE"){
@@ -57,7 +91,21 @@ exports.cRud_doSearchCVs = async (req, res) => {
                 if(item.type == "NOT_LIKE"){
                     filter = "[Curriculo_PercursoProfissional].[Tipo] NOT LIKE '%" + item.value + "%'" + " OR " + "[Curriculo_PercursoProfissional].[CategoriaInstituicao] NOT LIKE '%" + item.value + "%'" + " OR " + "[Curriculo_PercursoProfissional].[Empregador] NOT LIKE '%" + item.value + "%'";
                 }
-                // TODO
+                if(item.type == "MONTHYEAR_GREATER_START"){
+                    filter = "[Curriculo_PercursoProfissional].[PeriodoInicio] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_GREATER_END"){
+                    filter = "[Curriculo_PercursoProfissional].[PeriodoFim] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_START"){
+                    filter = "[Curriculo_PercursoProfissional].[PeriodoInicio] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_END"){
+                    filter = "[Curriculo_PercursoProfissional].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "IS_ACTUAL"){
+                    filter = "[Curriculo_PercursoProfissional].[Atual] = " + (item.value === "SIM") ? "1" : "0" + "";
+                }
                 break;
             case "Curriculo_Producao":
                 if(item.type == "LIKE"){
@@ -82,7 +130,18 @@ exports.cRud_doSearchCVs = async (req, res) => {
                 if(item.type == "NOT_LIKE"){
                     filter = "[Curriculo_Projecto].[Tipo] NOT LIKE '%" + item.value + "%'" + " OR " + "[Curriculo_Projecto].[Financiadores] NOT LIKE '%" + item.value + "%'" + " OR " + "[Curriculo_Projecto].[Designacao] NOT LIKE '%" + item.value + "%'";
                 }
-                // TODO
+                if(item.type == "MONTHYEAR_GREATER_START"){
+                    filter = "[Curriculo_Projecto].[PeriodoInicio] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_GREATER_END"){
+                    filter = "[Curriculo_Projecto].[PeriodoFim] >= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_START"){
+                    filter = "[Curriculo_Projecto].[PeriodoInicio] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
+                if(item.type == "MONTHYEAR_LESS_END"){
+                    filter = "[Curriculo_Projecto].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
+                }
                 break;        
             default:
                 break;
@@ -90,5 +149,23 @@ exports.cRud_doSearchCVs = async (req, res) => {
         let container = queryContainer.find(({table}) => table == item.table);
         container.filters.push(filter);
     })
-    return res.status(200).send(queryContainer);
+
+    let joins = queryContainer.map(item => {
+        return "LEFT JOIN " + "[" + item.table + "]" + " ON [Curriculo].[Id] = " + "[" + item.table + "]" + ".[Curriculo_FK]"
+    })
+    let wheres = [];
+    queryContainer.forEach(item => {
+        item.filters.forEach(filter => {
+            wheres.push(filter);
+        })
+    })
+
+    let baseQuery = "SELECT DISTINCT [Curriculo].[CienciaId], [Curriculo].[NomeCompleto] FROM [Curriculo]"
+    let baseAddJoins = joins.join(" ");
+    let baseAddWheres = "(" + wheres.join(") AND (") + ")";
+    let fullQuery = baseQuery + " " + baseAddJoins + " WHERE " + baseAddWheres;
+
+    let result = await generic.cRud_getData(fullQuery);
+
+    return res.status(200).send(result.recordset);
 }
