@@ -73,32 +73,44 @@ function doGetNewFilterLine(index){
 function doGetFilters(){
     const Type1 = [
         { label : "Contém", value : "LIKE", type : "text" },
+        { label : "Não contém", value : "NOT_LIKE", type : "text" }
+    ]
+
+    const Type2 = [
+        { label : "Contém", value : "LIKE", type : "text" },
+        { label : "Não contém", value : "NOT_LIKE", type : "text" },
+        { label : "Iniciado em (mês-ano)", value : "MONTHYEAR_GREATER_START", type : "month-year" },
+        { label : "Concluído em (mês-ano)", value : "MONTHYEAR_GREATER_END", type : "month-year"},
+        { label : "Iniciado até (mês-ano)", value : "MONTHYEAR_LESS_START", type : "month-year" },
+        { label : "Concluído até (mês-ano)", value : "MONTHYEAR_LESS_END", type : "month-year"}
+    ]
+
+    const Type3 = [
+        { label : "Contém", value : "LIKE", type : "text" },
         { label : "Não contém", value : "NOT_LIKE", type : "text" },
         { label : "Iniciado em (mês-ano)", value : "MONTHYEAR_GREATER_START", type : "month-year" },
         { label : "Concluído em (mês-ano)", value : "MONTHYEAR_GREATER_END", type : "month-year"},
         { label : "Iniciado até (mês-ano)", value : "MONTHYEAR_LESS_START", type : "month-year" },
         { label : "Concluído até (mês-ano)", value : "MONTHYEAR_LESS_END", type : "month-year"},
-        { label : "Iniciado em (ano)", value : "YEAR_GREATER_START", type : "year" },
-        { label : "Concluído em (ano)", value : "YEAR_GREATER_END", type : "year"},
-        { label : "Iniciado até (ano)", value : "YEAR_LESS_START", type : "year" },
-        { label : "Concluído até (ano)", value : "YEAR_LESS_END", type : "year"}
+        { label : "Em andamento", value : "IS_ACTUAL", type : "boolean"}
+    ]
 
-    ]
-    
-    const Type2 = [
+    const Type4 = [
         { label : "Contém", value : "LIKE", type : "text" },
-        { label : "Não contém", value : "NOT_LIKE", type : "text" }
-    ]
+        { label : "Não contém", value : "NOT_LIKE", type : "text" },
+        { label : "Atribuído a partir de (ano)", value : "YEAR_GREATER_START", type : "year" },
+        { label : "Atribuído até (ano)", value : "YEAR_LESS_END", type : "year"}
+    ]    
     
     const criteria = [
-        { label : 'Cabeçalho do currículo', value : 'Curriculo', options : Type2 },
-        { label : 'Atividade', value : 'Curriculo_Actividade', options : Type1 },
-        { label : 'Distinção', value : 'Curriculo_Distincao', options : Type1 },
-        { label : 'Formação', value : 'Curriculo_Formacao', options : Type1 },
-        { label : 'Percurso Profissional', value : 'Curriculo_PercursoProfissional', options : Type1 },
-        { label : 'Produção', value : 'Curriculo_Producao', options : Type2 },
-        { label : 'Idioma', value : 'Curriculo_ProeficienciaIdioma', options : Type2 },
-        { label : 'Projeto', value : 'Curriculo_Projecto', options : Type1 }
+        { label : 'Cabeçalho do currículo', value : 'Curriculo', options : Type1 }, 
+        { label : 'Atividade', value : 'Curriculo_Actividade', options : Type3 },
+        { label : 'Distinção', value : 'Curriculo_Distincao', options : Type4 },
+        { label : 'Formação', value : 'Curriculo_Formacao', options : Type3 },
+        { label : 'Percurso Profissional', value : 'Curriculo_PercursoProfissional', options : Type3 },
+        { label : 'Produção', value : 'Curriculo_Producao', options : Type1 },
+        { label : 'Idioma', value : 'Curriculo_ProeficienciaIdioma', options : Type1 },
+        { label : 'Projeto', value : 'Curriculo_Projecto', options : Type2 }
     ]
     return criteria;
 }
@@ -153,6 +165,9 @@ function doChooseFilterType(index){
             break;
         case 'year':
             placeholder = 'YYYY';
+            break;
+        case 'boolean':
+            placeholder = 'Sim/Não';
             break;
         default:
             break;
@@ -214,6 +229,11 @@ function doCheckAllowSearch(){
                         erroritems++;
                     }
                     break;
+                case 'boolean':
+                    if((item.value.toUpperCase() === "SIM" || item.value.toUpperCase() === "NÃO") == false){
+                        erroritems++;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -249,13 +269,29 @@ function doSubmitSearch(){
         method : "POST",
         body : JSON.stringify(criteria)
     }
+    document.getElementById('cienciavitae_results_container').innerHTML = '<p><b>Por favor aguarde...</b></p>'
     fetch(request_url, request_params)
     .then(async (response) => {
         var result = await response.json();
         if(result.message){
             alert(result.message);
         }
-        console.log('doSubmitSearch().result', result);
+
+        let result_HTML = '';
+        if(result.length > 0){
+            let result_HTML_TableHeader = '<thead><tr><th>Ciência Id</th><th>Nome</th><th>Data da última inserção</th></tr></thead>';
+            let result_HTML_TableLines = '';
+            result.forEach((curriculum_record) => {
+                let result_HTML_TableLine = `<tr><td>${curriculum_record.CienciaId}</td><td>${curriculum_record.NomeCompleto}</td><td>${curriculum_record.DataExtracao}</td></tr>`
+                result_HTML_TableLines += result_HTML_TableLine;
+            })
+            result_HTML += '<table style="width: 100%;">' + result_HTML_TableHeader + '<tbody>' + result_HTML_TableLines + '</tbody></table>'
+        } else {
+            result_HTML = '<p>Não foi possível encontrar registos que satisfaçam as condições de filtro indicadas. Experimente mudar os critérios, e tente novamente.</p>'
+        }
+        let cienciavitae_results_container = document.getElementById('cienciavitae_results_container');
+        cienciavitae_results_container.innerHTML = result_HTML;
+
     })
     .catch(async (error) => {
         alert('doSubmitSearch().error = ' + JSON.stringify(error));
