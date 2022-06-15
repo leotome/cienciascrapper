@@ -7,7 +7,6 @@
     --------------------*/
     $(window).on('load', function () {
         let token = this.getIsAuthenticated();
-        $("#tbl_username").empty().append(localStorage.getItem('cienciavitae_user'));
         this.doShowFilters();
     });
 
