@@ -121,7 +121,8 @@ async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
     // Define o registo final no formato JSON. Iremos armazenar a informação extraída aqui.
     // O resultado dará origem a 1 registo na BD.
     let myResult = {
-        Id : primaryKey
+        Id : primaryKey,
+        UltimaExtracao : 1
     };
     
     // ## PASSO #1 : ITERAR SOBRE CADA LINHA, PESQUISAR NA PÁGINA PELO XPATH, E SE ENCONTRAR GUARDAR A INFORMAÇÃO ## //

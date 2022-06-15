@@ -1,5 +1,30 @@
 const sql = require('./config_sql');
 
+exports.Crud_setLatest = (params) => {
+    return new Promise((resolve, reject) => {
+        sql.connect()
+        .then(conn => {
+            let CienciaId = params.CienciaId;
+            let LatestPK = params.Id;
+            
+            const statement = `UPDATE [Curriculo] SET [UltimaExtracao] = 0 WHERE [CienciaId] = '${CienciaId}' AND [Id] != '${LatestPK}'`;
+
+            conn.pool.query(statement)
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                console.log('Error on Crud_setLatest(), conn.pool.query', error);
+                reject(error);
+            });
+        })
+        .catch(err => {
+            console.log('Error on Crud_setLatest(), sql.connect', err);
+            reject(err);
+        })
+    });
+}
+
 exports.Crud_setRecord = (params) => {
     return new Promise((resolve, reject) => {
         sql.connect()

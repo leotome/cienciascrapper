@@ -175,13 +175,13 @@ exports.cRud_doSearchCVs = async (req, res) => {
     })
 
     // A consulta, do tipo "SELECT", terá as seguintes cláusulas: "LEFT JOIN", "WHERE"
-    let baseQuery = "SELECT DISTINCT [Curriculo].[CienciaId], [Curriculo].[NomeCompleto] FROM [Curriculo]"
+    let baseQuery = "SELECT [Curriculo].[Id], [Curriculo].[CienciaId], [Curriculo].[NomeCompleto], [Curriculo].[DataExtracao] FROM [Curriculo]"
     // Abaixo é feita a adição da cláusula LEFT JOIN
     let baseAddJoins = joins.join(" ");
     // Abaixo é feita a adição da cláusula WHERE
     let baseAddWheres = "(" + wheres.join(") AND (") + ")";
     // Abaixo é feita a construção dinâmica da consulta
-    let fullQuery = baseQuery + " " + baseAddJoins + " WHERE " + baseAddWheres;
+    let fullQuery = baseQuery + " " + baseAddJoins + " WHERE ([UltimaExtracao] = 1) AND " + baseAddWheres;
 
     let result = await generic.cRud_getData(fullQuery);
 

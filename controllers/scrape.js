@@ -22,6 +22,7 @@ exports.Crud_doScrapeCVs = async (req, res) => {
             await Promise.all(scrp_result.records.map(async (cv_section) => {
                 if(cv_section.key == 'Curriculo'){
                     await models.curriculo.Crud_setRecord(cv_section.value);
+                    await models.curriculo.Crud_setLatest(cv_section.value);
                 }
                 if(cv_section.key == 'Curriculo_ProeficienciaIdioma'){
                     cv_section.value.forEach((it) => {
