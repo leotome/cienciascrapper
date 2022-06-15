@@ -161,7 +161,11 @@ exports.cRud_doSearchCVs = async (req, res) => {
     })
 
     let joins = queryContainer.map(item => {
-        return "LEFT JOIN " + "[" + item.table + "]" + " ON [Curriculo].[Id] = " + "[" + item.table + "]" + ".[Curriculo_FK]"
+        // Uma vez que a base da consulta é feita com a tabela [Curriculo], podemos ignorar esta na construção das ligações "LEFT JOIN"
+        // Será utilizada, entretanto, na construção da cláusula WHERE
+        if(item.table != 'Curriculo'){
+            return "LEFT JOIN " + "[" + item.table + "]" + " ON [Curriculo].[Id] = " + "[" + item.table + "]" + ".[Curriculo_FK]"
+        }
     })
     let wheres = [];
     queryContainer.forEach(item => {
