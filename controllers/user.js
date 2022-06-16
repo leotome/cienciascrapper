@@ -1,5 +1,47 @@
 const user = require('../models/config_models').user;
 const jwt = require("jsonwebtoken");
+const utils = require("./config_utils");
+
+exports.getUserInfo = async (req, res) => {
+    let TokenData = utils.authenticateToken(req);
+    if(TokenData === null){
+        return res.status(400).send({ status : 400, message: "You are not authorized to perform this action." });
+    }
+    const Username = TokenData.Username;
+    user.cRud_usersByUsername(Username)
+    .then(async (result) => {
+        const User = result.recordset[0];
+        if(User.IsActive == true){
+            User.Password = undefined;
+            return res.status(200).json(User);
+        } else {
+            return res.status(401).send({ status : 401, message : "Não está autorizado a continuar. Por favor contacte o suporte." });
+        }
+    })
+    .catch((error) => {
+        return res.status(401).send({status : 401, message: JSON.stringify(error)});
+    })
+}
+
+exports.crUd_updateUser = async (req, res) => {
+    let TokenData = utils.authenticateToken(req);
+    if(TokenData === null){
+        return res.status(400).send({ status : 400, message: "You are not authorized to perform this action." });
+    }
+    if (req.body === undefined || !req.body) {
+        return res.status(400).send({ status: 400, message: "Body cannot be empty." });
+    }
+    const body = req.body;
+    body["Username"] = TokenData.Username;
+    console.log(body)
+    user.crUd_updateUser(body)
+    .then(result => {
+        return res.status(200).send({status : 200});
+    })
+    .catch(error => {
+        return res.status(401).send({status : 401, message: JSON.stringify(error)});
+    })
+}
 
 exports.login = async (req, res) => {
     if (req.body === undefined || !req.body) {

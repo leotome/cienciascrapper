@@ -17,6 +17,15 @@ module.exports = app => {
     router.get('/users/logout', controller.user.logout);
 
     // @http-verb : get
+    // @table : User
+    router.get('/users/info', controller.user.getUserInfo);
+
+    // @http-verb : post
+    // @table : User
+    // @body : expects { "FirstName" : string, "LastName" : string, "Email" : string, "Password" : string }
+    router.post('/users/update', controller.user.crUd_updateUser);    
+
+    // @http-verb : get
     // @table : AppMenu
     router.get('/config/menus', controller.appmenu.cRud_getMenusForUser);
 

@@ -6,23 +6,25 @@
         let token = this.getIsAuthenticated();
         this.doRequestPersonalInformation();
     });    
-    /*
+
     $("#info_changepw").on("click", function() {
         let TogglePw = $(this).is(':checked');
-        let PwContent = '<p>Password<span>*</span></p><input type="text" id="info_password">';
+        let PwContent = '<p>Palavra-passe<span>*</span></p><input type="password" id="info_password">';
+        let PwConfirmContent = '<p>Confirme a palavra-passe<span>*</span></p><input type="password" id="info_password_confirm">';
+        let FullContainer = PwContent + PwConfirmContent;
         let PwPanel = $("#container_info_password");
         PwPanel.empty();
         if(TogglePw == true){
-            PwPanel.append(PwContent);
+            PwPanel.append(FullContainer);
         } else {
 
         }
     });
-    */
+
 })(jQuery);
 
 function doRequestPersonalInformation(){
-    let request_url = this.getAPIURI() + 'users/information';
+    let request_url = getAPIURI() + '/users/info';
     fetch(request_url)
     .then(async (response) => {
         var result = await response.json();
@@ -31,49 +33,59 @@ function doRequestPersonalInformation(){
             alert(result.message);
             return;
         } else if(success == false){
-            alert('An unknown error occurred. Please contact support, or try again later.');
+            alert('Um erro ocorreu. Por favor contacte o suporte.');
             return;
         }
         let info_fname = document.getElementById("info_fname");
         let info_lname = document.getElementById("info_lname");
-        let info_phone = document.getElementById("info_phone");
         let info_email = document.getElementById("info_email");
-        info_fname.value = result[0].FirstName;
-        info_lname.value = result[0].LastName;
-        info_phone.value = result[0].Phone;
-        info_email.value = result[0].Email;
+        info_fname.value = result.FirstName;
+        info_lname.value = result.LastName;
+        info_email.value = result.Email;
     })
     .catch(async (error) => {
-        alert('An unknown error occurred. Please contact support, or try again later.');
+        alert('Um erro ocorreu. Por favor contacte o suporte.');
         console.log(JSON.stringify(error));
     })
 }
 
 function doUpdatePersonalInformation(){
-    let info_fname = document.getElementById("info_fname").value;
-    let info_lname = document.getElementById("info_lname").value;
-    let info_phone = document.getElementById("info_phone").value;
-    let info_email = document.getElementById("info_email").value;
+    let info_fname    = document.getElementById("info_fname").value;
+    let info_lname    = document.getElementById("info_lname").value;
+    let info_email    = document.getElementById("info_email").value;
+    let info_password = document.getElementById("info_password");
+    let info_password_confirm = document.getElementById("info_password_confirm");
     if(info_fname == ''){
-        alert('Please provide an First Name.');
+        alert('É obrigatório fornecer um nome.');
         return;
     }    
     if(info_lname == ''){
-        alert('Please provide Last Name.');
+        alert('É obrigatório fornecer um apelido.');
         return;
-    }    
-    if(info_phone == ''){
-        alert('Please provide a phone.');
-        return;
+    }
+    if(info_password){
+        if(info_password.value == ''){
+            alert('É obrigatório fornecer uma palavra-passe.');
+            return;
+        }
+        if(info_password_confirm.value == ''){
+            alert('É obrigatório confirmar a palavra-passe.');
+            return;
+        }
+        if(info_password.value != info_password_confirm.value){
+            alert('A palavra-passe e confirmação devem ser iguais. Por favor revise, e tente novamente.');
+            return;
+        }
+
     }
 
     let User = {
         FirstName : info_fname,
         LastName : info_lname,
-        Phone : info_phone,
-        Email : info_email
+        Email : info_email,
+        Password : (info_password) ? info_password.value : undefined
     }
-    let request_url = getAPIURI() + 'users/update';
+    let request_url = getAPIURI() + '/users/update';
     let request_params = {
         headers: {
             "Content-Type": "application/json",
@@ -90,13 +102,13 @@ function doUpdatePersonalInformation(){
             alert(result.message);
             return;
         } else if(success == false){
-            alert('An unknown error occurred. Please contact support, or try again later.');
+            alert('Um erro ocorreu. Por favor contacte o suporte.');
             return;
         }
-        alert('The information was updated successfully!')
+        alert('Os dados foram atualizados com sucesso!');
     })
     .catch(async (error) => {
-        alert('An unknown error occurred. Please contact support, or try again later.');
+        alert('Um erro ocorreu. Por favor contacte o suporte.');
         console.log(JSON.stringify(error));
     })
 

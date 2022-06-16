@@ -50,3 +50,31 @@ exports.Crud_registerUser = (param) => {
         })
     });
 }
+
+exports.crUd_updateUser = (param) => {
+    return new Promise((resolve, reject) => {
+        let SQLQuery = `UPDATE [User] SET [FirstName]='${param.FirstName}', [LastName]='${param.LastName}'`;
+        if(param.Password != undefined){
+            SQLQuery += `, [Password]='${param.Password}'`;
+        }
+        if(param.Email != undefined) {
+            SQLQuery += `, [Email]='${param.Email}'`;
+        }
+        SQLQuery += ` WHERE [Username]='${param.Username}'`;
+        sql.connect()
+        .then(conn => {
+            conn.pool.query(SQLQuery)
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                console.log('Error on crUd_updateUser(), conn.pool.query', error);
+                reject(error);
+            });
+        })
+        .catch(err => {
+            console.log('Error on crUd_updateUser(), sql.connect', err);
+            reject(err);
+        })
+    });
+}
