@@ -80,7 +80,11 @@ module.exports = app => {
     // @http-verb : get
     // @table : Curriculo_ProeficienciaIdioma
     // @param : expects { "Curriculo_FK" : string }
-    router.get('/curriculum/languages/:Curriculo_FK', controller.curriculo_proeficiencia_idioma.cRud_getByCurriculoFK);    
+    router.get('/curriculum/languages/:Curriculo_FK', controller.curriculo_proeficiencia_idioma.cRud_getByCurriculoFK);
+
+    // @http-verb : get
+    // @table : Report_Definition
+    router.get('/reports/definitions', controller.report_definition.cRud_getDefinitions);
 
     app.use('/api', router);
 }

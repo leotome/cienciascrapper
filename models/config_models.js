@@ -11,6 +11,7 @@ const curriculo_distincao = require('./curriculo_distincao');
 const user = require('./user');
 const appmenu = require('./appmenu');
 const generic = require('./generic');
+const report_definition = require('./report_definition');
 
 
 module.exports = {
@@ -26,5 +27,6 @@ module.exports = {
     curriculo_distincao : curriculo_distincao,
     user : user,
     appmenu : appmenu,
-    generic : generic
+    generic : generic,
+    report_definition : report_definition
 }
