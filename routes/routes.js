@@ -86,5 +86,9 @@ module.exports = app => {
     // @table : Report_Definition
     router.get('/reports/definitions', controller.report_definition.cRud_getDefinitions);
 
+    // @http-verb : get
+    // @table : Report_Definition / Report Table (which may vary!)
+    router.get('/reports/run/:Id', controller.report_definition.cRud_runReport);    
+
     app.use('/api', router);
 }
