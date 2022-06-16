@@ -17,6 +17,8 @@
 var global_find_tableFilter = [];
 var global_find_criteriaToConsider = [];
 
+var global_Data;
+
 function doShowFilters(){
     let cienciavitae_filters_container = document.getElementById("cienciavitae_filters_container");
     let cienciavitae_filters_button_container = document.getElementById("cienciavitae_filters_button_container");
@@ -276,22 +278,49 @@ function doSubmitSearch(){
             alert(result.message);
         }
 
+        global_Data = result;
+
         let result_HTML = '';
         if(result.length > 0){
             let result_HTML_TableHeader = '<thead><tr><th>Ciência Id</th><th>Nome</th><th>Data da última inserção</th></tr></thead>';
             let result_HTML_TableLines = '';
             result.forEach((curriculum_record) => {
-                let result_HTML_TableLine = `<tr><td><a href="/curriculum.html?id=${curriculum_record.Id}" target="_blank" style="color: blue; text-decoration: underline;">${curriculum_record.CienciaId}</a></td><td>${curriculum_record.NomeCompleto}</td><td>${curriculum_record.DataExtracao}</td></tr>`
+                let result_HTML_TableLine = `<tr><td><a href="/curriculum.html?id=${curriculum_record.Id}" target="_blank" style="color: blue; text-decoration: underline;">${curriculum_record.CienciaId}</a></td><td>${curriculum_record.NomeCompleto}</td><td>${new Date(curriculum_record.DataExtracao).toUTCString()}</td></tr>`
                 result_HTML_TableLines += result_HTML_TableLine;
             })
             result_HTML += '<table style="width: 100%;">' + result_HTML_TableHeader + '<tbody>' + result_HTML_TableLines + '</tbody></table>'
+            let cienciavitae_export_container = document.getElementById('cienciavitae_export_container');
+            cienciavitae_export_container.innerHTML = '<button type="button" onclick="doExportCSV()">Exportar lista</button>';
         } else {
             result_HTML = '<p>Não foi possível encontrar registos que satisfaçam as condições de filtro indicadas. Experimente mudar os critérios, e tente novamente.</p>'
         }
         let cienciavitae_results_container = document.getElementById('cienciavitae_results_container');
         cienciavitae_results_container.innerHTML = result_HTML;
+        
     })
     .catch(async (error) => {
         alert('doSubmitSearch().error = ' + JSON.stringify(error));
     }) 
+}
+
+function doExportCSV(){
+    let CSV_DATA = 'data:text/csv;charset=utf-8,';
+    let CSV_HEADER = '"CienciaId","NomeCompleto","DataExtracao"';
+    CSV_DATA += CSV_HEADER;
+    try {
+        global_Data.forEach(item => {
+            let CSV_ROW = `"${item.CienciaId}","${item.NomeCompleto}","${item.DataExtracao}"`;
+            CSV_DATA += '\r\n' + CSV_ROW;
+        })
+
+        var ContentURI = encodeURI(CSV_DATA);
+        var ElementContainer = document.createElement("a");
+        ElementContainer.setAttribute("href", ContentURI);
+        ElementContainer.setAttribute("download", "cienciascrapper_pesquisa_" + getFilenameEscapedDatetime(undefined) + ".csv");
+        document.body.appendChild(ElementContainer);
+        ElementContainer.click();
+    } catch (error) {
+        alert('Um erro ocorreu. Por favor, contacte o administrador do sistema.');
+        console.error(error);
+    }
 }

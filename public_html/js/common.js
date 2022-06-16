@@ -27,3 +27,33 @@ function getURLParameter(key){
     }
     return null;
 }
+
+function getHTMLEscapedDatetime(date){
+    var todayDate = new Date();
+    if(date != undefined){
+        todayDate = date;
+    }
+    var todayDate_Day = todayDate.getDate();
+    var todayDate_Month = todayDate.getMonth() + 1;
+    var todayDate_Year = todayDate.getFullYear();
+    var todayDate_Hours = todayDate.getHours();
+    var todayDate_Minutes = todayDate.getMinutes();
+    var todayDate_Seconds = todayDate.getSeconds();
+    var fullStringDate = `${todayDate_Year}-${todayDate_Month}-${todayDate_Day} ${todayDate_Hours}:${todayDate_Minutes}:${todayDate_Seconds}`;
+    return fullStringDate;
+}
+
+function getFilenameEscapedDatetime(date){
+    var todayDate = new Date();
+    if(date != undefined){
+        todayDate = date;
+    }
+    var todayDate_Day = todayDate.getDate();
+    var todayDate_Month = todayDate.getMonth() + 1;
+    var todayDate_Year = todayDate.getFullYear();
+    var todayDate_Hours = todayDate.getHours();
+    var todayDate_Minutes = todayDate.getMinutes();
+    var todayDate_Seconds = todayDate.getSeconds();
+    var fullStringDate = `${todayDate_Year}-${todayDate_Month}-${todayDate_Day}_${todayDate_Hours}-${todayDate_Minutes}-${todayDate_Seconds}`;
+    return fullStringDate;
+}
