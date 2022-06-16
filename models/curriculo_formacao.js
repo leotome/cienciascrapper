@@ -78,8 +78,9 @@ exports.cRud_getByCurriculoFK = (params) => {
         "     ,[Descricao]" +
         "     ,[Concluido]" +
         "     ,[Classificacao]" +
-        "FROM [Curriculo_Formacao]" + 
-        "WHERE [Curriculo_FK] = '" + params.Id + "'";
+        "FROM [Curriculo_Formacao] " + 
+        "WHERE [Curriculo_FK] = '" + params.Id + "' " + 
+        "ORDER BY [PeriodoFim] DESC";
         sql.connect()
         .then(conn => {
             conn.pool.query(SQLQuery)
