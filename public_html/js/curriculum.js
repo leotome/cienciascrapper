@@ -48,6 +48,12 @@ function retrieveHeader(recordId){
         let cienciavitae_header_resumo = document.getElementById('cienciavitae_header_resumo');
         cienciavitae_header_resumo.innerHTML = (header.Resumo != undefined) ? '<h6>' + header.Resumo + '</h6>' : '';
 
+        let cienciavitae_header_auditinfo = document.getElementById('cienciavitae_header_auditinfo');
+        let dataExtracao = new Date(header.DataExtracao);
+        cienciavitae_header_auditinfo.innerHTML = '<p>Data de extração: ' + dataExtracao.toUTCString() + ((header.UltimaExtracao) ? ' (última extração)' : '') + '</p>'
+
+        
+
         const summaryText = 'Identificação';
         let details_Header = `<details open><summary>${summaryText}</summary>`;
 
@@ -265,7 +271,6 @@ function retrieveProjects(recordId){
 }
 
 function retrieveOutputs(recordId){
-    let cienciavitae_producoes = document.getElementById('cienciavitae_producoes');
     let request_url = getAPIURI() + '/curriculum/outputs/' + recordId;
     let request_params = {
         method : "GET"
@@ -275,8 +280,78 @@ function retrieveOutputs(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
-        console.log('retrieveOutputs().result => ', result);
+
+        // To facilitate the iteration of records, we will group them by type and categories.
+
+        // A type has many categories. A category has multiple items/outputs.
+        // A item/output has one category. A category is contained in a type.
+        
+        // We will then reflect this data structure.
+
+        let outputItems = [];
+
+        // Step #1: Get distinct Types
+
+        result.forEach(record => {
+            let item = outputItems.find(({Tipo}) => Tipo == record.Tipo);
+            if(item == undefined){
+                let newItem = {
+                    Tipo : record.Tipo,
+                    Categorias : []
+                }
+                outputItems.push(newItem);
+            }
+        })
+
+        // Step #2: Get distinct Categories per Type
+
+        result.forEach(record => {
+            let item = outputItems.find(({Tipo}) => Tipo == record.Tipo);
+            let categories = item.Categorias.find(({Categoria}) => Categoria == record.Categoria);
+            if(categories == undefined){
+                let newItem = {
+                    Categoria : record.Categoria,
+                    Publicacoes : []
+                }
+                item.Categorias.push(newItem);
+            }
+        })
+
+        // Step #3: Add items/outputs for each type + category
+
+        result.forEach(record => {
+            let item = outputItems.find(({Tipo}) => Tipo == record.Tipo);
+            let categories = item.Categorias.find(({Categoria}) => Categoria == record.Categoria);
+            categories.Publicacoes.push(record.Descricao);
+        })
+
+        // Step #4: Add to DOM
+
+        let result_HTML = '';
+
+        outputItems.forEach(item => {
+            let type_Title = '<h5><b>' + item.Tipo + '</b></h5>';
+            let type_Table = '<table><tbody>';
+            item.Categorias.forEach(categoria => {
+                let category_Line = `<tr><td style="width: 40%; vertical-align:top;">${categoria.Categoria}</td><td style="width: 60%;"><ul>`
+                let outputs = categoria.Publicacoes.map(output => {
+                    return `<li>${output}</li>`
+                })
+                category_Line += outputs.join("");
+                category_Line += '</ul></td></tr>';
+                type_Table += category_Line;
+            })
+            type_Table += '</tbody></table>'
+            result_HTML += type_Title + type_Table;
+        })
+
+        const summaryText = 'Publicações';
+        let details_Header = `<details open><summary>${summaryText}</summary>`;
+
+        let cienciavitae_producoes = document.getElementById('cienciavitae_producoes');
+        cienciavitae_producoes.innerHTML = '<div class="col-lg-12">' + details_Header + result_HTML + '</details>' + '</div>';
     })
     .catch(async (error) => {
         alert('retrieveOutputs().error = ' + JSON.stringify(error));
@@ -284,7 +359,6 @@ function retrieveOutputs(recordId){
 }
 
 function retrieveActivities(recordId){
-    let cienciavitae_atividades = document.getElementById('cienciavitae_atividades');
     let request_url = getAPIURI() + '/curriculum/activities/' + recordId;
     let request_params = {
         method : "GET"
@@ -294,8 +368,47 @@ function retrieveActivities(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
-        console.log('retrieveActivities().result => ', result);
+        if(result.length > 0){
+            const summaryText = 'Atividades';
+            let details_Header = `<details open><summary>${summaryText}</summary>`;
+            let allTypes_Container = '';
+
+            let GroupedTypes = [];
+            result.forEach(record => {
+                let item = GroupedTypes.find(({type}) => type == record.Tipo);
+                if(item != undefined){
+                    item.values.push(record);
+                } else {
+                    let newItem = {type : record.Tipo, values : []};
+                    newItem.values.push(record);
+                    GroupedTypes.push(newItem);
+                }
+            })
+
+            GroupedTypes.forEach(item => {
+                let type_Title = '<h5><b>' + item.type + '</b></h5>';
+                let table_Header = '<thead><tr><th>Período</th><th>Descrição</th><th>Instituição/Organização</th></tr></thead>';
+                let table_Lines = '';
+                item.values.forEach(record => {
+                    let periodoInicio_Text = (record.PeriodoInicio != undefined) ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoInicio).getFullYear()) : undefined;
+                    let periodoFim_Text    = (record.PeriodoFim != undefined)    ? String(new Date(record.PeriodoInicio).getMonth()+1).padStart(2, "0") + '-' + String(new Date(record.PeriodoFim).getFullYear())       : undefined;
+                    let periodoText = (periodoFim_Text != undefined) ? `${periodoInicio_Text} - ${periodoFim_Text}` : `${periodoInicio_Text} - Atual`;
+                    let cursoInstituicao_Text = (record.CursoInstituicao != undefined) ? record.CursoInstituicao : '';
+                    if(record.Atual){
+                        periodoText += '<br/><sub>Atual</sub>';
+                    }
+                    let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 20%;">${periodoText}</td><td style="vertical-align:top; width: 60%;">${record.Descricao}</td><td style="vertical-align:top;width: 20%;">${cursoInstituicao_Text}</td></tr>`;
+                    table_Lines += table_Line;
+                })
+                allTypes_Container += type_Title + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+            })
+
+            let result_HTML = details_Header + allTypes_Container + '</details>';
+            let cienciavitae_atividades = document.getElementById('cienciavitae_atividades');
+            cienciavitae_atividades.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
+        }
     })
     .catch(async (error) => {
         alert('retrieveActivities().error = ' + JSON.stringify(error));
@@ -303,7 +416,6 @@ function retrieveActivities(recordId){
 }
 
 function retrieveDistinctions(recordId){
-    let cienciavitae_distincoes = document.getElementById('cienciavitae_distincoes');
     let request_url = getAPIURI() + '/curriculum/distinctions/' + recordId;
     let request_params = {
         method : "GET"
@@ -313,8 +425,42 @@ function retrieveDistinctions(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
         }
-        console.log('retrieveDistinctions().result => ', result);
+        if(result.length > 0){
+            const summaryText = 'Distinções';
+            let details_Header = `<details open><summary>${summaryText}</summary>`;
+            let allTypes_Container = '';
+
+            let GroupedTypes = [];
+            result.forEach(record => {
+                let item = GroupedTypes.find(({type}) => type == record.Tipo);
+                if(item != undefined){
+                    item.values.push(record);
+                } else {
+                    let newItem = {type : record.Tipo, values : []};
+                    newItem.values.push(record);
+                    GroupedTypes.push(newItem);
+                }
+            })
+
+            GroupedTypes.forEach(item => {
+                let type_Title = '<h5><b>' + item.type + '</b></h5>';
+                let table_Header = '<thead><tr><th>Ano</th><th>Descrição</th></tr></thead>';
+                let table_Lines = '';
+                item.values.forEach(record => {
+                    let year_Text = (record.Ano != undefined) ? record.Ano : '';
+                    let description_Text = (record.Descricao != undefined) ? record.Descricao : '';
+                    let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 30%;">${year_Text}</td><td style="vertical-align:top; width: 70%;">${description_Text}</td></tr>`;
+                    table_Lines += table_Line;
+                })
+                allTypes_Container += type_Title + '<table style="width: 100%;">' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+            })
+
+            let result_HTML = details_Header + allTypes_Container + '</details>';
+            let cienciavitae_distincoes = document.getElementById('cienciavitae_distincoes');
+            cienciavitae_distincoes.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
+        }
     })
     .catch(async (error) => {
         alert('retrieveDistinctions().error = ' + JSON.stringify(error));
