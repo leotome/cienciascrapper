@@ -33,7 +33,6 @@ exports.crUd_updateUser = async (req, res) => {
     }
     const body = req.body;
     body["Username"] = TokenData.Username;
-    console.log(body)
     user.crUd_updateUser(body)
     .then(result => {
         return res.status(200).send({status : 200});
