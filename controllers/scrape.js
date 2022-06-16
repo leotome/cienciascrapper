@@ -12,10 +12,12 @@ exports.Crud_doScrapeCVs = async (req, res) => {
         let result = await scrape_cienciavitae.doScrapeVitae(item);
         return {
             CienciaId : item,
+            recordId : (result != undefined) ? result.find(({key}) => key == 'Curriculo').value.Id : '',
             success : (result == undefined) ? false : true,
             records : result
         };
     }))
+    
 
     const insertDB = await Promise.all(scrp.map(async (scrp_result) => {
         if(scrp_result.success == true){

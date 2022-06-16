@@ -167,7 +167,7 @@ async function doSimpleScrape(mappingItem, pageReference, primaryKey) {
     // ## PASSO #1 : ITERAR SOBRE CADA LINHA, PESQUISAR NA PÁGINA PELO XPATH, E SE ENCONTRAR GUARDAR A INFORMAÇÃO ## //
     
     // Terminada a extração.
-    return (Object.keys(myResult).length == 1) ? undefined : myResult;
+    return (Object.keys(myResult).length == 2) ? undefined : myResult;
 }
 
 async function doTableScrape_1(mappingItem, pageReference, foreignKey) {

@@ -46,12 +46,17 @@ function retrieveHeader(recordId){
         let cienciavitae_header_fullname = document.getElementById('cienciavitae_header_fullname');
         cienciavitae_header_fullname.innerHTML = '<h2>' + header.NomeCompleto + '</h2>';
         let cienciavitae_header_resumo = document.getElementById('cienciavitae_header_resumo');
-        cienciavitae_header_resumo.innerHTML = (header.Resumo != undefined) ? '<h6>' + header.Resumo + '</h6>' : '';
+        cienciavitae_header_resumo.innerHTML = (header.Resumo != undefined) ? '<h6 style="text-align:justify;">' + header.Resumo + '</h6>' : '';
+
+        
+        let dataExtracao = new Date(header.DataExtracao);
+        let dataExtracao_Text = 'Data de extração: ' + dataExtracao.toUTCString() + ((header.UltimaExtracao) ? ' (última extração)' : '') + ''
+        let allVersions_Text = `<a href="/versions.html?cienciaId=${header.CienciaId}" target="_blank" style="color: blue; text-decoration: underline;">Ver lista de versões deste currículo</a>`;
+
+        var headerInfo = `<table style="width:100%; border-bottom: 0px;"><tr style="border-bottom: 0px;"><td>${dataExtracao_Text}</td><td style="text-align:right;">${allVersions_Text}</td></tr></table><br/>`;
 
         let cienciavitae_header_auditinfo = document.getElementById('cienciavitae_header_auditinfo');
-        let dataExtracao = new Date(header.DataExtracao);
-        cienciavitae_header_auditinfo.innerHTML = '<p>Data de extração: ' + dataExtracao.toUTCString() + ((header.UltimaExtracao) ? ' (última extração)' : '') + '</p>'
-
+        cienciavitae_header_auditinfo.innerHTML = headerInfo;
         
 
         const summaryText = 'Identificação';
@@ -150,7 +155,7 @@ function retrieveEducation(recordId){
                 table_Lines += table_Line;
             })
 
-            let result_HTML = details_Header + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table>' + '</details>';
+            let result_HTML = details_Header + '<table style="width: 100%;">' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table>' + '</details>';
             let cienciavitae_formacao = document.getElementById('cienciavitae_formacao');
             cienciavitae_formacao.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
         }
@@ -203,7 +208,7 @@ function retrieveAffiliations(recordId){
                     let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 20%;">${periodoText}</td><td style="vertical-align:top; width: 60%;">${record.CategoriaInstituicao}</td><td style="vertical-align:top;width: 20%;">${record.Empregador}</td></tr>`;
                     table_Lines += table_Line;
                 })
-                allTypes_Container += type_Title + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+                allTypes_Container += type_Title + '<table style="width: 100%;">' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
             })
 
             let result_HTML = details_Header + allTypes_Container + '</details>';
@@ -257,7 +262,7 @@ function retrieveProjects(recordId){
                     let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 20%;">${periodoText}</td><td style="vertical-align:top; width: 60%;">${record.Designacao}</td><td style="vertical-align:top;width: 20%;">${financiadores_Text}</td></tr>`;
                     table_Lines += table_Line;
                 })
-                allTypes_Container += type_Title + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+                allTypes_Container += type_Title + '<table style="width: 100%;">' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
             })
 
             let result_HTML = details_Header + allTypes_Container + '</details>';
@@ -280,6 +285,9 @@ function retrieveOutputs(recordId){
         var result = await response.json();
         if(result.message){
             alert(result.message);
+            return;
+        }
+        if(result.length == 0){
             return;
         }
 
@@ -333,7 +341,7 @@ function retrieveOutputs(recordId){
 
         outputItems.forEach(item => {
             let type_Title = '<h5><b>' + item.Tipo + '</b></h5>';
-            let type_Table = '<table><tbody>';
+            let type_Table = '<table style="width: 100%;"><tbody>';
             item.Categorias.forEach(categoria => {
                 let category_Line = `<tr><td style="width: 40%; vertical-align:top;">${categoria.Categoria}</td><td style="width: 60%;"><ul>`
                 let outputs = categoria.Publicacoes.map(output => {
@@ -402,7 +410,7 @@ function retrieveActivities(recordId){
                     let table_Line = `<tr><td style="white-space:nowrap; vertical-align:top;width: 20%;">${periodoText}</td><td style="vertical-align:top; width: 60%;">${record.Descricao}</td><td style="vertical-align:top;width: 20%;">${cursoInstituicao_Text}</td></tr>`;
                     table_Lines += table_Line;
                 })
-                allTypes_Container += type_Title + '<table>' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
+                allTypes_Container += type_Title + '<table style="width: 100%;">' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table><br/>';
             })
 
             let result_HTML = details_Header + allTypes_Container + '</details>';

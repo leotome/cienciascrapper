@@ -135,3 +135,33 @@ exports.cRud_getById = (params) => {
         })
     });
 }
+
+exports.cRud_getVersions = (params) => {
+    return new Promise((resolve, reject) => {
+        let SQLQuery = "SELECT [Id]" + 
+        "      ,[NomeCompleto]" + 
+        "      ,[NomesCitacao]" + 
+        "      ,[Resumo]" + 
+        "      ,[CienciaId]" + 
+        "      ,[DataExtracao]" + 
+        "      ,[UltimaExtracao]" + 
+        "FROM [Curriculo] " +
+        "WHERE [CienciaId] = '" + params.CienciaId + "' " + 
+        "ORDER BY [DataExtracao] DESC";
+        sql.connect()
+        .then(conn => {
+            conn.pool.query(SQLQuery)
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                console.log('Error on cRud_getVersions(), conn.pool.query', error);
+                reject(error);
+            });
+        })
+        .catch(err => {
+            console.log('Error on cRud_getVersions(), sql.connect', err);
+            reject(err);
+        })
+    });
+}

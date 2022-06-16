@@ -34,6 +34,11 @@ module.exports = app => {
     router.get('/curriculum/header/:Id', controller.curriculo.cRud_getById);
 
     // @http-verb : get
+    // @table : Curriculo
+    // @param : expects { "CienciaId" : string }
+    router.get('/curriculum/versions/:CienciaId', controller.curriculo.cRud_getVersions);
+
+    // @http-verb : get
     // @table : Curriculo_Actividade
     // @param : expects { "Curriculo_FK" : string }
     router.get('/curriculum/activities/:Curriculo_FK', controller.curriculo_actividade.cRud_getByCurriculoFK);
