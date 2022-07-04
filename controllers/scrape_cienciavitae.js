@@ -33,13 +33,13 @@ exports.doScrapeVitae = async (cienciaID) => {
         await page.goto(baseURL + cienciaID);
         // Para debugging dentro do document.evaluate
         
-        /*
+
         page.on('console', msg => {
             for (let i = 0; i < msg.args().length; ++i){
                 console.log(`${i}: ${msg.args()[i]}`);
             }
         });
-        */
+
 
         page.on('response', res => {
             if(res.status() > 300){
@@ -621,22 +621,27 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
                 // Extrai o conteúdo do título, numa string formatada.
 				let type = node.textContent.replace('\n','').trim();
                 // Vai buscar o nó vizinho. Espera-se que "nextSibling" retorne um "Node" que mapeia para um elemento "<table>"
-                // Extrai o conteúdo do 1º elemento </td>. Este será a categoria.
-				const category = Array.from(node.nextSibling.querySelectorAll('td'))[0].textContent;
-                // É feita a iteração por cada linha "<li>". Transorma o "Node" num array simplificado.
-				let items = Array.from(node.nextSibling.querySelectorAll('li'));
-				let arrayItems = [];
-				items.forEach(item => {
-					arrayItems.push(item.innerText);
-				})
+                var contentTable = node.nextSibling;
+                // É feita a iteração da tabela, por cada "<tr>".
+                // Para cada linha da tabela, i.e. elemento "<tr>", haverá duas colunas "<td>". A 1ª será a categoria, e a 2ª conterá uma lista não numerada "<ul>"
+                // A 1ª coluna então será a categoria, e a 2ª coluna será simplificada através dos elementos "<li>" que pertencem à lista.
+                // Transorma o "Node" num array simplificado.
+                const table = Array.from(contentTable.querySelectorAll('tr'), row => {
+                    const columns = row.querySelectorAll('td');
+                    const category2 = columns[0].innerText;
+                    const data2 = Array.from(columns[1].querySelectorAll('li'), line => line.innerText);
+                    return { category : category2, items : data2 };
+                });
                 // O resultado dessa extração é armazenado num formato conveniente para iteração posterior.
                 // Armazena-se num objeto JSON, na variável "myData" definida no início do PASSO #2.
-				let ret = {
-					type : type,
-					category : category,
-					items : arrayItems
-				};
-				myData.push(ret);
+                table.forEach(item => {
+                    let ret = {
+                        type : type,
+                        category : item.category,
+                        items : item.items
+                    };
+                    myData.push(ret);
+                })
 			}
         })
 		// ## PASSO #1.2 : EXTRAIR A INFORMAÇÃO DA ESTRUTURA DA PÁGINA ## //
