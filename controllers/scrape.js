@@ -21,47 +21,51 @@ exports.Crud_doScrapeCVs = async (req, res) => {
 
     const insertDB = await Promise.all(scrp.map(async (scrp_result) => {
         if(scrp_result.success == true){
+            // First, insert the CV header
             await Promise.all(scrp_result.records.map(async (cv_section) => {
                 if(cv_section.key == 'Curriculo'){
                     await models.curriculo.Crud_setRecord(cv_section.value);
                     await models.curriculo.Crud_setLatest(cv_section.value);
                 }
+            }))
+            // Afterwards, insert all the dependent tables
+            await Promise.all(scrp_result.records.map(async (cv_section) => {
                 if(cv_section.key == 'Curriculo_ProeficienciaIdioma'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_proeficiencia_idioma.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_proeficiencia_idioma.Crud_setRecord(record);
                     })
                 }
                 if(cv_section.key == 'Curriculo_Formacao'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_formacao.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_formacao.Crud_setRecord(record);
                     })
                 }
                 if(cv_section.key == 'Curriculo_PercursoProfissional'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_percurso_profissional.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_percurso_profissional.Crud_setRecord(record);
                     })
                 }
                 if(cv_section.key == 'Curriculo_Projecto'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_projecto.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_projecto.Crud_setRecord(record);
                     })
                 }
                 if(cv_section.key == 'Curriculo_Producao'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_producao.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_producao.Crud_setRecord(record);
                     })
                 }
                 if(cv_section.key == 'Curriculo_Actividade'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_actividade.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_actividade.Crud_setRecord(record);
                     })
                 }
                 if(cv_section.key == 'Curriculo_Distincao'){
-                    cv_section.value.forEach((it) => {
-                        models.curriculo_distincao.Crud_setRecord(it);
+                    cv_section.value.forEach(async (record) => {
+                        await models.curriculo_distincao.Crud_setRecord(record);
                     })
                 }
-            }))
+            }))            
         }
     }));
 
