@@ -92,9 +92,7 @@ function retrieveHeader(recordId){
                                                attributeValue_TypeElement_Open + header.NomeCompleto + attributeValue_TypeElement_Close +
                                                '</div>';
 
-        let citationNames_Container = '<div>' + citationNames_Header + 
-                                      attributeValue_TypeElement_Open + header.NomesCitacao + attributeValue_TypeElement_Close +
-                                      '</div>';                                               
+        let citationNames_Container = (header.NomesCitacao != undefined) ? '<div>' + citationNames_Header + attributeValue_TypeElement_Open + header.NomesCitacao + attributeValue_TypeElement_Close + '</div>' : '';
         
         let identifiers_Container = '<div>' + identifiers_Header +
                                     ((header.CienciaId != undefined)       ? identifiers_CienciaId    + attributeValue_TypeElement_Open + header.CienciaId       + attributeValue_TypeElement_Close : '') + 
