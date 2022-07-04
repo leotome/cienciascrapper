@@ -4,10 +4,10 @@ const mssql = require('mssql');
 
 exports.connect = () => {
     const config = {
-        server : '192.168.1.120,1433',
+        server : '192.168.1.251,1433',
         database : 'cienciascrapper',
-        username : 'sa',
-        password : 'qwerty',
+        username : 'cienciascrapper',
+        password : 'K@G?2GXt4rbYpZVpjd@a',
         encrypt : false
     }
     return new Promise((resolve, reject) => {
