@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer');
-const crypto = require('crypto');
+const {v4: uuidv4} = require('uuid');
 const definicao_mapeamento = require('../models/config_models').definicao_mapeamento;
 const definicao_url = require('../models/config_models').definicao_url;
 
 exports.doScrapeVitae = async (cienciaID) => {
     // A chave primária da tabela "Curriculo" deve ser gerada neste método, para facilitar a ligação com FK no detalhe do CV.
-    let GUID = crypto.randomUUID().toUpperCase();
+    let GUID = uuidv4().toUpperCase();
 
     // O mapeamento está definido e deve respeitar ao que está configurado nas tabelas "[Definicao_Mapeamento]" e "[Definicao_Mapeamento_Linha]".
     // Como é sabido, esta aplicação funciona com recurso a iteração de uma página HTML através de XPaths.
