@@ -652,8 +652,18 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
     // ## PASSO #2 : EXTRAIR A INFORMAÇÃO DO FORMATO CONVENIENTE EM REGISTOS DA BD ## //
     // O PASSO #1 extraiu informação num formato JSON { type : string, category : string, items : array }.
     // Vamos iterar cada item, e para cada item, vamos correr a tabela [Definicao_Mapeamento_Linha] de modo a mapear a informação para o formato esperado da BD.
+    let configuredYears = helper_getIntArray(1900, new Date().getFullYear());
     doEvaluate.forEach((RetLine) => {
         let records = RetLine.items.map((item) => {
+            var Threshold_Attempt = Math.trunc((item.length * 0.7));
+            var TresholdString_Attempt = item.substring(Threshold_Attempt, (item.length));
+            var Ano_Attempt = null;
+            configuredYears.forEach(configuredYear => {
+                var stringYear = String(configuredYear);
+                if(TresholdString_Attempt.includes(stringYear + '.')){
+                    Ano_Attempt = configuredYear;
+                }
+            })
             return {
                 Curriculo_FK : foreignKey,
                 // Mapeia-se o título, de modo fixo, à coluna "Tipo" da tabela da BD.
@@ -661,13 +671,16 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
                 // Mapeia-se a categoria, de modo fixo, à coluna "Category" da tabela da BD.
                 Categoria : RetLine.category,
                 // Mapeia-se o texto do item, de modo fixo, à coluna "Descricao" da tabela da BD.
-                Descricao : item
+                Descricao : item,
+                // Tentar obter o ano a partir dos últimos caracteres da descrição
+                Ano : Ano_Attempt
             }
         })
         // E, no fim, finaliza-se e formaliza-se o registo por meio da adição/"concat" da lista de objetos JSON resultante ao array "myResult".
         myResult = myResult.concat(records);
     });
     // Terminada a extração.
+
     return myResult;
 }
 
@@ -797,6 +810,15 @@ function helper_getDate(dateString){
         default:
             result = null;
             break;
+    }
+    return result;
+}
+
+function helper_getIntArray(a, b){
+    // Método auxiliar para gerar uma lista com inteiros, entre A e B
+    let result = [];
+    for(var i = a; i < b; i++){
+        result.push(i);
     }
     return result;
 }
