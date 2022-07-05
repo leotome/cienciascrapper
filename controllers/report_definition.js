@@ -83,15 +83,12 @@ exports.cRud_runReportWithFilters = async (req, res) => {
     }
     // Este método só é executado quando o utilizador submeter os parâmetros de pesquisa de um relatório dinâmico.
     // Portanto, só se aplica quando é um relatório dinâmico!
-    console.log(req.body)
     try {
         // Faz consulta à base de dados para obter os metadados que correspondem à definição de relatório
         let definition = await report_definition.cRud_getDefinition({ Id : req.params.Id });
         // Esta variável pode retornar 0 registos, que é nos casos em que o relatório é simples/estático.
         // Ao contrário do que é verificado no método "cRud_runReport", neste caso, é esperado que SEMPRE retorne resultados.
         let definition_items = await report_definition.cRud_getDefinitionItems({ Id : req.params.Id });
-        console.log(definition)
-        console.log(definition_items)
         if(definition.recordset.length > 0 && definition_items.recordset.length > 0){
             let error_paramMapping = false;
             // Verificação de segurança, para garantir que não há injeção de código malicioso.
@@ -107,13 +104,11 @@ exports.cRud_runReportWithFilters = async (req, res) => {
                     return {ParameterName : parameter.ParameterName, Value : parameter.Value, Definition : definition_item};
                 }
             })
-            console.log(bodyParameters)
             if(error_paramMapping == true){
                 return res.status(404).send({status : 404, message: 'This report definition does not exist. Please try again, or contact support.'});
             }
             // Busca a definição de query SQL, dos metadados
             let SQLStatement = definition.recordset[0].SQLStatement;
-            console.log(SQLStatement)
             // Para cada parâmetro, substituir na query original
             // Aqui é feita a criação dinâmica da consulta
             bodyParameters.forEach((parameter) => {
@@ -121,10 +116,8 @@ exports.cRud_runReportWithFilters = async (req, res) => {
                 let Value = parameter.Value;
                 SQLStatement = SQLStatement.replaceAll(ParameterName, Value);
             })
-            console.log(SQLStatement)
             // Obter os dados para retornar ao front-end
             let reportData = await generic.cRud_getData(SQLStatement);
-            console.log(reportData)
             // Devolve os dados ao front-end
             let finalResponse = {
                 reportData : reportData.recordset
