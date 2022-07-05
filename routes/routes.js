@@ -88,7 +88,11 @@ module.exports = app => {
 
     // @http-verb : get
     // @table : Report_Definition / Report Table (which may vary!)
-    router.get('/reports/run/:Id', controller.report_definition.cRud_runReport);    
+    router.get('/reports/run/:Id', controller.report_definition.cRud_runReport);
+
+    // @http-verb : get
+    // @table : Report_Definition / Report Table (which may vary!)
+    router.post('/reports/run/:Id/submit', controller.report_definition.cRud_runReportWithFilters);
 
     app.use('/api', router);
 }
