@@ -149,6 +149,8 @@ function doSubmitReport(){
             return;
         }
         let reportData = result.reportData;
+        let cienciavitae_report_countresult = document.getElementById('cienciavitae_report_countresult');
+        cienciavitae_report_countresult.innerHTML = `<b>Total de resultados:</b>&nbsp;${reportData.length}`;
         if(reportData.length == 0){
             let cienciavitae_report_result = document.getElementById('cienciavitae_report_result');
             cienciavitae_report_result.innerHTML = '';
