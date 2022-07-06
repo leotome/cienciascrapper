@@ -39,6 +39,10 @@ function doRunReport(reportId){
         let reportData = result.reportData;
         let reportFilters = result.reportFilters;
         global_reportFilters = reportFilters;
+
+        let cienciavitae_report_countresult = document.getElementById('cienciavitae_report_countresult');
+        cienciavitae_report_countresult.innerHTML = `<b>Total de resultados:</b>&nbsp;${reportData.length}`;
+
         if(reportData.length == 0 && reportFilters.length == 0){
             return;
         }

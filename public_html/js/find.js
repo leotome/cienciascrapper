@@ -291,6 +291,9 @@ function doSubmitSearch(){
             result_HTML += '<table style="width: 100%;">' + result_HTML_TableHeader + '<tbody>' + result_HTML_TableLines + '</tbody></table>'
             let cienciavitae_export_container = document.getElementById('cienciavitae_export_container');
             cienciavitae_export_container.innerHTML = '<button type="button" onclick="doExportCSV()">Exportar lista</button>';
+
+            let cienciavitae_countresults_container = document.getElementById('cienciavitae_countresults_container');
+            cienciavitae_countresults_container.innerHTML = `<b>Total de resultados:</b>&nbsp;${result.length}`;
         } else {
             result_HTML = '<p>Não foi possível encontrar registos que satisfaçam as condições de filtro indicadas. Experimente mudar os critérios, e tente novamente.</p>'
         }
