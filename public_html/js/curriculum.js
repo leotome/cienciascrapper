@@ -353,7 +353,7 @@ function retrieveOutputs(recordId){
             result_HTML += type_Title + type_Table;
         })
 
-        const summaryText = 'Publicações';
+        const summaryText = 'Produções';
         let details_Header = `<details open><summary>${summaryText}</summary>`;
 
         let cienciavitae_producoes = document.getElementById('cienciavitae_producoes');
