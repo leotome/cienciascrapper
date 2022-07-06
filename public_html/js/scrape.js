@@ -127,9 +127,9 @@ function doSubmitScrape(){
             let resultCard = '';
             resultCard += '<div class="row">'
             if(item.success == true){
-                resultCard += `<img style="width: 25px; height: 25px;" src="./img/icons/success.png"/>&nbsp;<a href="/curriculum.html?id=${item.recordId}" target="_blank" style="color: blue; text-decoration: underline;">${item.CienciaId} : ${item.records.find(({key}) => key == 'Curriculo').value.NomeCompleto}</a>`;
+                resultCard += `<img style="width: 25px; height: 25px;" src="/img/icons/success.png"/>&nbsp;<a href="/curriculum.html?id=${item.recordId}" target="_blank" style="color: blue; text-decoration: underline;">${item.CienciaId} : ${item.records.find(({key}) => key == 'Curriculo').value.NomeCompleto}</a>`;
             } else {
-                resultCard += `<img style="width: 25px; height: 25px;" src="./img/icons/error.png"/>&nbsp;${item.CienciaId} : Erro ao extrair. Verifique se o Ciência ID está correto, e tente novamente.`;
+                resultCard += `<img style="width: 25px; height: 25px;" src="/img/icons/error.png"/>&nbsp;${item.CienciaId} : Erro ao extrair. Verifique se o Ciência ID está correto, e tente novamente.`;
             }
             resultCard += '</div>'
             allResultCards += resultCard;

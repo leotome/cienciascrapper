@@ -23,6 +23,9 @@
                 $("#cienciascrapper_menu").append(allMenuHTML);
             })
             .catch(error => {
+                localStorage.removeItem("cienciavitae_app");
+                localStorage.removeItem("cienciavitae_user");
+                localStorage.removeItem("cienciavitae_type");
                 console.log('doGetMenus.error()', error);
             })
             $("#cienciascrapper_usermenu").empty().append(logged);
