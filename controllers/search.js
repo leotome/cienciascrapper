@@ -7,10 +7,14 @@ exports.cRud_doSearchCVs = async (req, res) => {
         return res.status(400).send({ status : 400, message: "You are not authorized to perform this action." });
     }
     const body = req.body;
-    let queryContainer = body.map(item => {
-        return {
-            table : item.table,
-            filters : []
+    let queryContainer = [];
+    body.forEach(item => {
+        let container = queryContainer.find(({table}) => table == item.table);
+        if(container == undefined){
+            queryContainer.push({
+                table : item.table,
+                filters : []
+            }); 
         }
     })
     // Estes filtros são construídos com base nas escolhas feitas pelos utilizadores na interface gráfica.
@@ -48,7 +52,7 @@ exports.cRud_doSearchCVs = async (req, res) => {
                     filter = "[Curriculo_Actividade].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
                 }
                 if(item.type == "IS_ACTUAL"){
-                    filter = "[Curriculo_Actividade].[Atual] = " + (item.value === "SIM") ? "1" : "0" + "";
+                    filter = "[Curriculo_Actividade].[Atual] = " + ((item.value === "SIM") ? "1" : "0" + "");
                 }
                 break;
             // Construir consulta dinâmica para a tabela [Curriculo_Distincao]
@@ -87,7 +91,7 @@ exports.cRud_doSearchCVs = async (req, res) => {
                     filter = "[Curriculo_Formacao].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
                 }
                 if(item.type == "IS_ACTUAL"){
-                    filter = "[Curriculo_Formacao].[Concluido] = " + (item.value === "SIM") ? "0" : "1" + "";
+                    filter = "[Curriculo_Formacao].[Concluido] = " + ((item.value === "SIM") ? "0" : "1" + "");
                 }
                 break;
             // Construir consulta dinâmica para a tabela [Curriculo_PercursoProfissional]
@@ -111,7 +115,7 @@ exports.cRud_doSearchCVs = async (req, res) => {
                     filter = "[Curriculo_PercursoProfissional].[PeriodoFim] <= '" + item.value.split('-')[1] + "-" + item.value.split('-')[0] + "-" + "01" + "'";
                 }
                 if(item.type == "IS_ACTUAL"){
-                    filter = "[Curriculo_PercursoProfissional].[Atual] = " + (item.value === "SIM") ? "1" : "0" + "";
+                    filter = "[Curriculo_PercursoProfissional].[Atual] = " + ((item.value === "SIM") ? "1" : "0" + "");
                 }
                 break;
             // Construir consulta dinâmica para a tabela [Curriculo_Producao]
@@ -181,9 +185,17 @@ exports.cRud_doSearchCVs = async (req, res) => {
     // Abaixo é feita a adição da cláusula WHERE
     let baseAddWheres = "(" + wheres.join(") AND (") + ")";
     // Abaixo é feita a construção dinâmica da consulta
-    let fullQuery = baseQuery + " " + baseAddJoins + " WHERE ([UltimaExtracao] = 1) AND " + baseAddWheres + " ORDER BY [Curriculo].[NomeCompleto] ASC";
+    let fullQuery = baseQuery + " " + baseAddJoins + " WHERE ([UltimaExtracao] = 1) AND (" + baseAddWheres + ") ORDER BY [Curriculo].[NomeCompleto] ASC";
 
     let result = await generic.cRud_getData(fullQuery);
 
-    return res.status(200).send(result.recordset);
+    let formatResult = [];
+    result.recordset.forEach((item) => {
+        let container = formatResult.find(({CienciaId}) => CienciaId == item.CienciaId);
+        if(container == undefined){
+            formatResult.push(item);
+        }
+    })
+
+    return res.status(200).send(formatResult);
 }
