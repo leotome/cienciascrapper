@@ -12,7 +12,7 @@
         let cienciavitae_app = localStorage.getItem('cienciavitae_app');
         let cienciavitae_user = localStorage.getItem('cienciavitae_user');
         if(cienciavitae_app){
-            let logged = `<li><a href="./user.html">${cienciavitae_user}</a></li><li><a href="#" onclick="doLogout()">Logout</a></li>`;
+            let logged = `<li><a href="./user.html" style="color: blue;">${cienciavitae_user}</a></li><li><a href="#" style="color: blue;" onclick="doLogout()">Logout</a></li>`;
             doGetMenus()
             .then(fullMenus => {
                 let allMenuHTML = '';
