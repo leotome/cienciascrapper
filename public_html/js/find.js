@@ -302,6 +302,8 @@ function doSubmitSearch(){
             cienciavitae_countresults_container.innerHTML = `<b>Total de resultados:</b>&nbsp;${result.length}`;
         } else {
             result_HTML = '<p>Não foi possível encontrar registos que satisfaçam as condições de filtro indicadas. Experimente mudar os critérios, e tente novamente.</p>'
+            let cienciavitae_countresults_container = document.getElementById('cienciavitae_countresults_container');
+            cienciavitae_countresults_container.innerHTML = `<b>Total de resultados:</b>&nbsp;0`;
         }
         let cienciavitae_results_container = document.getElementById('cienciavitae_results_container');
         cienciavitae_results_container.innerHTML = result_HTML;
