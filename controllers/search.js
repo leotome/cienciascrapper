@@ -126,6 +126,9 @@ exports.cRud_doSearchCVs = async (req, res) => {
                 if(item.type == "NOT_LIKE"){
                     filter = "[Curriculo_Producao].[Tipo] NOT LIKE '%" + item.value + "%' OR [Curriculo_Producao].[Categoria] NOT LIKE '%" + item.value + "%' OR [Curriculo_Producao].[Descricao] NOT LIKE '%" + item.value + "%'";
                 }
+                if(item.type == "RELEASE_YEAR"){
+                    filter = "[Curriculo_Producao].[Ano] = " + item.value;
+                }
                 break;
             // Construir consulta dinâmica para a tabela [Curriculo_ProeficienciaIdioma]
             case "Curriculo_ProeficienciaIdioma":

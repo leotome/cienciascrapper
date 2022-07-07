@@ -101,7 +101,13 @@ function doGetFilters(){
         { label : "Não contém", value : "NOT_LIKE", type : "text" },
         { label : "Atribuído a partir de (ano)", value : "YEAR_GREATER_START", type : "year" },
         { label : "Atribuído até (ano)", value : "YEAR_LESS_END", type : "year"}
-    ]    
+    ]
+
+    const Type5 = [
+        { label : "Contém", value : "LIKE", type : "text" },
+        { label : "Não contém", value : "NOT_LIKE", type : "text" },
+        { label : "Ano de publicação", value : "RELEASE_YEAR", type : "year" }
+    ]
     
     const criteria = [
         { label : 'Cabeçalho do currículo', value : 'Curriculo', options : Type1 }, 
@@ -109,7 +115,7 @@ function doGetFilters(){
         { label : 'Distinção', value : 'Curriculo_Distincao', options : Type4 },
         { label : 'Formação', value : 'Curriculo_Formacao', options : Type3 },
         { label : 'Percurso Profissional', value : 'Curriculo_PercursoProfissional', options : Type3 },
-        { label : 'Produção', value : 'Curriculo_Producao', options : Type1 },
+        { label : 'Produção', value : 'Curriculo_Producao', options : Type5 },
         { label : 'Idioma', value : 'Curriculo_ProeficienciaIdioma', options : Type1 },
         { label : 'Projeto', value : 'Curriculo_Projecto', options : Type2 }
     ]
