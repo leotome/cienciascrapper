@@ -23,9 +23,6 @@
                 $("#cienciascrapper_menu").append(allMenuHTML);
             })
             .catch(error => {
-                localStorage.removeItem("cienciavitae_app");
-                localStorage.removeItem("cienciavitae_user");
-                localStorage.removeItem("cienciavitae_type");
                 console.log('doGetMenus.error()', error);
             })
             $("#cienciascrapper_usermenu").empty().append(logged);
@@ -74,10 +71,14 @@
 async function doGetMenus(){
     let request_url = getAPIURI() + '/config/menus';
     let response = await fetch(request_url);
-    let data = await response.json();
     let success = response.ok;
     if(success){
+        let data = await response.json();
         return data;
+    } else {
+        localStorage.removeItem("cienciavitae_app");
+        localStorage.removeItem("cienciavitae_user");
+        localStorage.removeItem("cienciavitae_type");
     }
     return [];
 }
