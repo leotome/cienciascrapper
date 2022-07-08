@@ -29,12 +29,13 @@ function doGetReportDefinitions(){
         }
 
         var table_HTML = '<table style="width: 100%;">'
-        var tableHeader_HTML = '<thead><tr><th>#</th><th>Nome do relatório</th></tr></thead>';
+        var tableHeader_HTML = '<thead><tr><th>#</th><th>Nome do relatório</th><th>Descrição</th></tr></thead>';
         var tableLines_HTML = '';
 
         result.forEach((item, index) => {
             let allVersions_Text = `<a href="/reportrun.html?id=${item.Id}" target="_self" style="color: blue; text-decoration: underline;">${item.Name}</a>`;
-            var tableLine_HTML = `<tr><td>${index+1}</td><td>${allVersions_Text}</td></tr>`;
+            let description_Text = (item.Description != undefined) ? item.Description : ''; 
+            var tableLine_HTML = `<tr><td>${index+1}</td><td>${allVersions_Text}</td><td>${description_Text}</td></tr>`;
             tableLines_HTML += tableLine_HTML;
         })
         var result_HTML = '<div class="col-lg-12">' + table_HTML + tableHeader_HTML + '<tbody>' + tableLines_HTML + '</tbody>' + '</table>' + '</div>';

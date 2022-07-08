@@ -35,7 +35,14 @@ function doRunReport(reportId){
 
         let cienciavitae_report_title = document.getElementById('cienciavitae_report_title');
         cienciavitae_report_title.innerHTML = '<h2>' + result.reportTitle + '</h2>';
-        
+
+        console.log(result.reportDescription);
+
+        if(result.reportDescription != undefined){
+            let cienciavitae_report_description = document.getElementById('cienciavitae_report_description');
+            cienciavitae_report_description.innerHTML = '<div class="row"><div class="col-lg-12">' + result.reportDescription + '</div></div></br>';
+        }
+
         let reportData = result.reportData;
         let reportFilters = result.reportFilters;
         global_reportFilters = reportFilters;

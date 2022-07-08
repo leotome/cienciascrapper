@@ -49,6 +49,7 @@ exports.cRud_runReport = async (req, res) => {
             let reportData = await generic.cRud_getData(definition.recordset[0].SQLStatement);
             let finalResponse = {
                 reportTitle : definition.recordset[0].Name,
+                reportDescription : definition.recordset[0].Description,
                 reportFilters : [],
                 reportData : reportData.recordset
             }
@@ -58,6 +59,7 @@ exports.cRud_runReport = async (req, res) => {
             // Como será necessário uma intervenção pelo utilizador, com este método devolvemos o atributo "reportData" vazio.
             let finalResponse = {
                 reportTitle : definition.recordset[0].Name,
+                reportDescription : definition.recordset[0].Description,
                 reportFilters : definition_items.recordset,
                 reportData : []
             }

@@ -4,6 +4,7 @@ exports.cRud_getDefinitions = () => {
     return new Promise((resolve, reject) => {
         let SQLQuery = "SELECT [Id]" +
                        "      ,[Name]" +
+                       "      ,[Description]" +
                        "      ,[IsActive]" +
                        "      ,[SQLStatement]" +
                        "      ,[CreatedDate]" +
@@ -32,6 +33,7 @@ exports.cRud_getDefinition = (params) => {
     return new Promise((resolve, reject) => {
         let SQLQuery = "SELECT [Id]" +
                        "      ,[Name]" +
+                       "      ,[Description]" +
                        "      ,[IsActive]" +
                        "      ,[SQLStatement]" +
                        "      ,[CreatedDate]" +
