@@ -49,7 +49,7 @@ function doDeleteFilter(index){
     tableLine.parentNode.removeChild(tableLine);
     global_find_criteriaToConsider[index] = undefined;
     global_find_tableFilter.splice(index, 1);
-    console.log(global_find_criteriaToConsider)
+    doCheckAllowSearch();
 }
 
 function doGetNewFilterLine(index){
@@ -307,6 +307,7 @@ function doSubmitSearch(){
         }
         let cienciavitae_results_container = document.getElementById('cienciavitae_results_container');
         cienciavitae_results_container.innerHTML = result_HTML;
+        doCheckAllowSearch();
         
     })
     .catch(async (error) => {
