@@ -17,8 +17,8 @@
 
 
 function retrieveCurriculum(recordId){
-    console.log('id => ' + recordId);
     retrieveHeader(recordId);
+    retrieveLanguages(recordId);
     retrieveEducation(recordId);
     retrieveAffiliations(recordId);
     retrieveProjects(recordId);
@@ -120,6 +120,45 @@ function retrieveHeader(recordId){
     })
     .catch(async (error) => {
         alert('retrieveHeader().error = ' + JSON.stringify(error));
+    })
+}
+
+function retrieveLanguages(recordId){
+    let request_url = getAPIURI() + '/curriculum/languages/' + recordId;
+    let request_params = {
+        method : "GET"
+    }
+    fetch(request_url, request_params)
+    .then(async (response) => {
+        var result = await response.json();
+        if(result.message){
+            alert(result.message);
+            return;
+        }
+        if(result.length > 0){
+            const summaryText = 'Idiomas';
+            let details_Header = `<details open><summary>${summaryText}</summary>`;
+            let table_Header = '<thead><tr><th>Idioma</th><th>Conversação</th><th>Leitura</th><th>Escrita</th><th>Compreensão</th><th>Peer-review</th></tr></thead>';
+            let table_Lines = '';
+
+            result.forEach(record => {
+                let language = (record.Idioma != undefined) ? record.Idioma : '';
+                let convers = (record.Conversacao != undefined) ? record.Conversacao : '';
+                let read = (record.Leitura != undefined) ? record.Leitura : '';
+                let write = (record.Escrita != undefined) ? record.Escrita : '';
+                let coompr = (record.Compreensao != undefined) ? record.Compreensao : '';
+                let peerR = (record.PeerReview != undefined) ? record.PeerReview : '';
+                let table_Line = `<tr><td>${language}</td><td>${convers}</td><td>${read}</td><td>${write}</td><td>${coompr}</td><td>${peerR}</td></tr>`;
+                table_Lines += table_Line;
+            })
+
+            let result_HTML = details_Header + '<table style="width: 100%;">' + table_Header + '<tbody>' + table_Lines + '</tbody>' + '</table>' + '</details>';
+            let cienciavitae_idioma = document.getElementById('cienciavitae_idioma');
+            cienciavitae_idioma.innerHTML = '<div class="col-lg-12">' + result_HTML + '</div>';
+        }
+    })
+    .catch(async (error) => {
+        alert('retrieveLanguages().error = ' + JSON.stringify(error));
     })
 }
 
