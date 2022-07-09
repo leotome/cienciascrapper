@@ -655,7 +655,7 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
     let configuredYears = helper_getIntArray(1900, new Date().getFullYear());
     doEvaluate.forEach((RetLine) => {
         let records = RetLine.items.map((item) => {
-            var Threshold_Attempt = Math.trunc((item.length * 0.7));
+            var Threshold_Attempt = Math.trunc((item.length * 0.8));
             var TresholdString_Attempt = item.substring(Threshold_Attempt, (item.length));
             var Ano_Attempt = null;
             configuredYears.forEach(configuredYear => {
