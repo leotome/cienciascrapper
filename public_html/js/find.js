@@ -25,9 +25,26 @@ function doShowFilters(){
     let firstLine = doAddFilterLine(false);
     let tableHTML = '<table style="width: 100%;" id="cienciavitae_filters_container_table">' + firstLine + '</table>';
     let addLineButton = '<a onclick="doAddFilterLine(true)"><i class="fa fa-plus"></i></a>';
+    
     let submitButton = '<button type="button" id="cienciavitae_filters_button" onclick="doSubmitSearch()" disabled>Pesquisar</button>';
+    
+    let selectFilterType_HTML_start         = '<select id="cienciavitae_filters_filterType_select" onchange="doSetFilterType()">';
+    let selectFilterType_HTML_defaultOption = '<option hidden>Escolha uma opção</option>';
+    let selectFilterType_HTML_ANDOption     = '<option value="AND">Utilizar "AND" para critérios aplicados sobre a mesma tabela</option>';
+    let selectFilterType_HTML_OROption      = '<option value="OR">Utilizar "OU" entre critérios aplicados sobre a mesma tabela</option>';
+    let selectFilterType_HTML_end           = '</select>';
+    let selectFilterType = selectFilterType_HTML_start + selectFilterType_HTML_defaultOption + selectFilterType_HTML_ANDOption + selectFilterType_HTML_OROption + selectFilterType_HTML_end;
+
     cienciavitae_filters_container.innerHTML = tableHTML + '<br/>' + addLineButton;
-    cienciavitae_filters_button_container.innerHTML = submitButton;
+    cienciavitae_filters_button_container.innerHTML = selectFilterType + '&nbsp;' + submitButton;
+    doShowSelectFilterType();
+}
+
+function doShowSelectFilterType(){
+
+    let cienciavitae_filters_filterType = document.getElementById("cienciavitae_filters_filterType");
+    
+    
 }
 
 function doAddFilterLine(addToDOM){
@@ -211,6 +228,10 @@ function doSetFilterValue(index){
     doCheckAllowSearch();
 }
 
+function doSetFilterType(){
+    doCheckAllowSearch();
+}
+
 function doCheckAllowSearch(){
     let items = 0;
     let erroritems = 0;
@@ -247,6 +268,12 @@ function doCheckAllowSearch(){
         }
     })
 
+    let cienciavitae_filters_filterType_select = document.getElementById('cienciavitae_filters_filterType_select');
+    let filterType = cienciavitae_filters_filterType_select.value;
+    if(filterType != 'AND' && filterType != 'OR'){
+        erroritems++;
+    }
+
     let cienciavitae_filters_button = document.getElementById('cienciavitae_filters_button');
 
     if(items > 0 && erroritems == 0){
@@ -268,13 +295,22 @@ function doSubmitSearch(){
     }
     let cienciavitae_filters_button = document.getElementById('cienciavitae_filters_button');
     cienciavitae_filters_button.disabled = true;
+
+    let cienciavitae_filters_filterType_select = document.getElementById('cienciavitae_filters_filterType_select');
+    let filterType = cienciavitae_filters_filterType_select.value;
+
+    let req = {
+        criteria : criteria,
+        filterType : filterType
+    }
+
     let request_url = getAPIURI() + '/search/find';
     let request_params = {
         headers: {
             "Content-Type": "application/json",
         },
         method : "POST",
-        body : JSON.stringify(criteria)
+        body : JSON.stringify(req)
     }
     document.getElementById('cienciavitae_results_container').innerHTML = '<p><b>Por favor aguarde...</b></p>'
     fetch(request_url, request_params)
@@ -283,14 +319,15 @@ function doSubmitSearch(){
         if(result.message){
             alert(result.message);
         }
-
-        global_Data = result;
+        console.log(result);
+        let data = result.data;
+        global_Data = data;
 
         let result_HTML = '';
-        if(result.length > 0){
+        if(data.length > 0){
             let result_HTML_TableHeader = '<thead><tr><th>Ciência Id</th><th>Nome</th><th>Data da última inserção</th></tr></thead>';
             let result_HTML_TableLines = '';
-            result.forEach((curriculum_record) => {
+            data.forEach((curriculum_record) => {
                 let result_HTML_TableLine = `<tr><td><a href="/curriculum.html?id=${curriculum_record.Id}" target="_blank" style="color: blue; text-decoration: underline;">${curriculum_record.CienciaId}</a></td><td>${curriculum_record.NomeCompleto}</td><td>${new Date(curriculum_record.DataExtracao).toUTCString()}</td></tr>`
                 result_HTML_TableLines += result_HTML_TableLine;
             })
@@ -299,12 +336,15 @@ function doSubmitSearch(){
             cienciavitae_export_container.innerHTML = '<button type="button" onclick="doExportCSV()">Exportar lista</button>';
 
             let cienciavitae_countresults_container = document.getElementById('cienciavitae_countresults_container');
-            cienciavitae_countresults_container.innerHTML = `<b>Total de resultados:</b>&nbsp;${result.length}`;
+            cienciavitae_countresults_container.innerHTML = `<b>Total de resultados:</b>&nbsp;${data.length}`;
         } else {
             result_HTML = '<p>Não foi possível encontrar registos que satisfaçam as condições de filtro indicadas. Experimente mudar os critérios, e tente novamente.</p>'
             let cienciavitae_countresults_container = document.getElementById('cienciavitae_countresults_container');
             cienciavitae_countresults_container.innerHTML = `<b>Total de resultados:</b>&nbsp;0`;
         }
+        let cienciavitae_filters_appliedFilters = document.getElementById('cienciavitae_filters_appliedFilters');
+        cienciavitae_filters_appliedFilters.innerHTML = `<b>Filtro aplicado:</b>&nbsp;${result.appliedFilter}`;
+
         let cienciavitae_results_container = document.getElementById('cienciavitae_results_container');
         cienciavitae_results_container.innerHTML = result_HTML;
         doCheckAllowSearch();
