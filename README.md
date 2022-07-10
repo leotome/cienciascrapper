@@ -41,5 +41,5 @@ Poderá encontrar os documentos na pasta "/private/manuals" deste repositório, 
  - [Manual de administração](https://github.com/leotome/cienciascrapper/blob/master/private/manuals/administracao.pdf)
  - [Manual de utilização](https://github.com/leotome/cienciascrapper/blob/master/private/manuals/utilizacao.pdf)
 
-Os requisitos para cada uma das atividades se encontram listados nos documentos.
+Os requisitos mínimos para cada uma das componentes (requisitos para a hospedagem/instalação, requisitos para a administração, requisitos para a utilização) se encontram listados nos documentos.
 
