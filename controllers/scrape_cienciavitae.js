@@ -655,15 +655,30 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
     let configuredYears = helper_getIntArray(1900, new Date().getFullYear());
     doEvaluate.forEach((RetLine) => {
         let records = RetLine.items.map((item) => {
-            var Threshold_Attempt = Math.trunc((item.length * 0.8));
+            var Threshold_Attempt = Math.trunc((item.length * 0.3));
             var TresholdString_Attempt = item.substring(Threshold_Attempt, (item.length));
             var Ano_Attempt = null;
             configuredYears.forEach(configuredYear => {
                 var stringYear = String(configuredYear);
-                if(TresholdString_Attempt.includes(stringYear + '.')){
-                    Ano_Attempt = configuredYear;
+                if(Ano_Attempt == null){
+                    // Tentativa #1: Obter o ano com base no padrão "[...]. 2022. [...]"
+                    if(TresholdString_Attempt.includes('. ' + stringYear + '.')){
+                        Ano_Attempt = configuredYear;
+                    // Tentativa #2: Obter o ano com base no padrão ", 2022."                        
+                    } else if(TresholdString_Attempt.includes(', ' + stringYear + '.')){
+                        Ano_Attempt = configuredYear;
+                    // Tentativa #3: Obter o ano com base no padrão "[...](2022)[...]"
+                    } else if(TresholdString_Attempt.includes('(' + stringYear + ')')){
+                        Ano_Attempt = configuredYear;
+                    }
                 }
             })
+            if(Ano_Attempt == null){
+                console.log('item', item);
+                console.log('Threshold_Attempt', Threshold_Attempt);
+                console.log('TresholdString_Attempt', TresholdString_Attempt);
+                console.log('Ano_Attempt', Ano_Attempt);
+            }
             return {
                 Curriculo_FK : foreignKey,
                 // Mapeia-se o título, de modo fixo, à coluna "Tipo" da tabela da BD.
