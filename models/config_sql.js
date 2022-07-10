@@ -4,7 +4,7 @@ const mssql = require('mssql');
 
 exports.connect = () => {
     const config = {
-        server : '192.168.1.251,1433',
+        server : 'holoserver,1433',
         database : 'cienciascrapper',
         username : 'cienciascrapper',
         password : 'K@G?2GXt4rbYpZVpjd@a',
