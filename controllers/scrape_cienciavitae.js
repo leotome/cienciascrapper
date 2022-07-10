@@ -30,6 +30,7 @@ exports.doScrapeVitae = async (cienciaID) => {
         // Métodos implementados pela biblioteca "Puppeteer"
         // Navega para a página
         const page = await browser.newPage();
+        page.setDefaultNavigationTimeout(0);
         await page.goto(baseURL + cienciaID);
         // Para debugging dentro do document.evaluate
         
