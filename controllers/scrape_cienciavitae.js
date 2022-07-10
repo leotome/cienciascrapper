@@ -673,12 +673,6 @@ async function doListScrape(mappingItem, pageReference, foreignKey) {
                     }
                 }
             })
-            if(Ano_Attempt == null){
-                console.log('item', item);
-                console.log('Threshold_Attempt', Threshold_Attempt);
-                console.log('TresholdString_Attempt', TresholdString_Attempt);
-                console.log('Ano_Attempt', Ano_Attempt);
-            }
             return {
                 Curriculo_FK : foreignKey,
                 // Mapeia-se o título, de modo fixo, à coluna "Tipo" da tabela da BD.
