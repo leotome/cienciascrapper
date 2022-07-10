@@ -25,8 +25,8 @@ Esta aplicação foi desenvolvida no âmbito da disciplina de "Laboratório de P
 
 Este projeto foi desenvolvido com as seguintes tecnologias:
 
- - Node.js
- - Microsoft SQL Server
+ - [Node.js](https://nodejs.org/en/)
+ - [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-2019)
 
 Para implementar algumas funcionalidades, foi necessário recorrer a algumas bibliotecas:
 
