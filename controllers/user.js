@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
     const Password = req.body.Password;
     user.cRud_usersByUsername(Username)
     .then(async (result) => {
-        if(result.length == 0){
+        if(result.recordset.length == 0){
             return res.status(401).send({ status: 401, message: "O utilizador ou palavra-passe estão incorretos." });
         }
         const User = result.recordset[0];
