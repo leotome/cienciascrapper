@@ -29,7 +29,7 @@ function doShowRows(){
 }
 
 function doAddRow(addToDOM){
-    var nextItem = global_find_tableHTMLRows.length;
+    var nextItem = (global_find_tableHTMLRows.length) + 1;
     if(nextItem > 8){
         alert('Erro: só pode listar até 8 currículos para inserção, por vez.');
         return;
