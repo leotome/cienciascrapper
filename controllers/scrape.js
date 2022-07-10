@@ -8,6 +8,10 @@ exports.Crud_doScrapeCVs = async (req, res) => {
         return res.status(400).send({ status : 400, message: "You are not authorized to perform this action." });
     }
     const body = req.body;
+    const limit = 8;
+    if(body.length > limit){
+        return res.status(400).send({ status : 400, message: "Too many Ciência IDs. Please try again, with a maximum of " + String(limit) + '.'});
+    }
     const scrp = await Promise.all(body.map(async (item) => {
         let result = await scrape_cienciavitae.doScrapeVitae(item);
         return {

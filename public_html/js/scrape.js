@@ -30,8 +30,8 @@ function doShowRows(){
 
 function doAddRow(addToDOM){
     var nextItem = global_find_tableHTMLRows.length;
-    if(nextItem > 9){
-        alert('Erro: só pode listar até 10 currículos para inserção, por vez.');
+    if(nextItem > 8){
+        alert('Erro: só pode listar até 8 currículos para inserção, por vez.');
         return;
     }
     var lineHTML = doGetNewRow(nextItem);
