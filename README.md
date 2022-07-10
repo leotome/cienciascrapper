@@ -14,10 +14,10 @@ Esta aplicação foi desenvolvida no âmbito da disciplina de "Laboratório de P
 
 **Docentes da cadeira "Laboratório de Projeto":**
 
- - Prof. Dr. Daniel Silvestre
- - Prof. Dr. Mário Marques da Silva
- - Prof. Dr. Raúl Dionísio
  - Profa. Dra. Valéria Pequeno
+ - Prof. Dr. Mário Marques da Silva
+ - Prof. Dr. Gonçalo Valadão Matias
+ - Prof. Dr. Raúl Dionísio
 
 **Universidade Autónoma de Lisboa, 2021/2022**
 
