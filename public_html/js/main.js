@@ -26,7 +26,6 @@
                 console.log('doGetMenus.error()', error);
             })
             $("#cienciascrapper_usermenu").empty().append(logged);
-            
         }
     });
 
@@ -79,6 +78,8 @@ async function doGetMenus(){
         localStorage.removeItem("cienciavitae_app");
         localStorage.removeItem("cienciavitae_user");
         localStorage.removeItem("cienciavitae_type");
+        window.location.reload(true);
+        return false;
     }
     return [];
 }
