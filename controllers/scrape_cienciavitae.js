@@ -34,12 +34,13 @@ exports.doScrapeVitae = async (cienciaID) => {
         await page.goto(baseURL + cienciaID);
         // Para debugging dentro do document.evaluate
         
-
+        /*
         page.on('console', msg => {
             for (let i = 0; i < msg.args().length; ++i){
                 console.log(`${i}: ${msg.args()[i]}`);
             }
         });
+        */
 
 
         page.on('response', res => {
